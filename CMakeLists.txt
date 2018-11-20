@@ -93,6 +93,7 @@ ADD_LIBRARY(pdip SHARED ${PDIP_LIB_SRC})
 # Build of the program
 ADD_EXECUTABLE(pdip_exe pdip.c pdip_util.c)
 SET_TARGET_PROPERTIES(pdip_exe PROPERTIES OUTPUT_NAME pdip)
+TARGET_LINK_LIBRARIES(pdip_exe platform)
 
 # Installation of the library
 INSTALL(TARGETS pdip
@@ -173,3 +174,4 @@ ADD_SUBDIRECTORY(test)
 ADD_SUBDIRECTORY(isys)
 ADD_SUBDIRECTORY(rsys)
 
+ADD_SUBDIRECTORY(platform)

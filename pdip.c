@@ -135,6 +135,8 @@
 #include "config.h"
 #include "pdip_util.h"
 
+#include "ptypes.h"
+
 
 
 // ----------------------------------------------------------------------------
@@ -465,7 +467,7 @@ static void pdip_new_argv(char *str)
       pdip_argv = (char **)realloc(pdip_argv, ((size_t)pdip_argv_nb * sizeof(char *)));
       if (!pdip_argv)
       {
-        PDIP_ERR("Error %d at realloc(%zu)\n", errno, (size_t)pdip_argv_nb * sizeof(char *));
+        PDIP_ERR("Error %d at realloc(%"PRISIZE"u)\n", errno, (size_t)pdip_argv_nb * sizeof(char *));
         exit(1);
       }
     }
@@ -480,7 +482,7 @@ static void pdip_new_argv(char *str)
     pdip_argv = (char **)malloc((size_t)pdip_argv_nb * sizeof(char *));
     if (!pdip_argv)
     {
-      PDIP_ERR("Error %d at malloc(%zu)\n", errno, (size_t)pdip_argv_nb * sizeof(char *));
+      PDIP_ERR("Error %d at malloc(%"PRISIZE"u)\n", errno, (size_t)pdip_argv_nb * sizeof(char *));
       exit(1);
     }
     pdip_argv[0] = str;
@@ -791,7 +793,7 @@ int err_sav;
       }
 
       err_sav = errno;
-      //PDIP_ERR("Error '%m' (%d) on read(fd:%d, l:%zu)\n", errno, fd, l);
+      //PDIP_ERR("Error '%m' (%d) on read(fd:%d, l:%"PRISIZE"u)\n", errno, fd, l);
       errno = err_sav;
       return -1;
     }
@@ -1340,7 +1342,7 @@ int             eol_fnd;
     line_skip = (char *)realloc(line_skip, line_sz);
     if (!line_skip)
     {
-      PDIP_ERR("Memory allocation error (%zu bytes)\n", line_sz);
+      PDIP_ERR("Memory allocation error (%"PRISIZE"u bytes)\n", line_sz);
       return -1;
     }
   } // End if working buffer to short
@@ -1690,7 +1692,7 @@ int   rc;
     return;
   }
 
-  PDIP_DBG(3, "Number of sub expressions in regex (%s): %zu\n", pattern, regex->re_nsub);
+  PDIP_DBG(3, "Number of sub expressions in regex (%s): %"PRISIZE"u\n", pattern, regex->re_nsub);
 
   return;
 } // pdip_compile_regex
@@ -2428,7 +2430,7 @@ int             err_sav;
 		    }
                     else
 		    {
-                      PDIP_ERR("Line %u: malloc(%zu) failed with error %d ('%m')\n"
+                      PDIP_ERR("Line %u: malloc(%"PRISIZE"u) failed with error %d ('%m')\n"
                                , lineno, (size_t)(pdip_argc * sizeof(char *)), errno);
 		    }
 		  }
@@ -2447,7 +2449,7 @@ int             err_sav;
 		    }
                     else
 		    {
-                      PDIP_ERR("Line %u: malloc(%zu) failed with error %d ('%m')\n"
+                      PDIP_ERR("Line %u: malloc(%"PRISIZE"u) failed with error %d ('%m')\n"
                                , lineno, (size_t)(pdip_argc * sizeof(char *)), errno);
 		    }
 		  } // End if synchronous

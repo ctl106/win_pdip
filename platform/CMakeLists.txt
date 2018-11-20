@@ -1,0 +1,15 @@
+set(PLATFORM_HEADERS
+  ptypes.h
+)
+
+set(PLATFORM_SOURCES
+)
+
+ADD_LIBRARY(platform STATIC
+  ${PLATFORM_HEADERS}
+  ${PLATFORM_SOURCES}
+)
+
+# probably only needed due to the current lack of source files.
+SET_TARGET_PROPERTIES(platform PROPERTIES LINKER_LANGUAGE C)
+TARGET_INCLUDE_DIRECTORIES(platform INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

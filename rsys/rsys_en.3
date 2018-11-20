@@ -1,0 +1,164 @@
+.\" Format this file with the following command :
+.\" groff -man -Tascii  <file>
+.\"
+.TH RSYS 3  "MARCH 2018" "API" "API"
+.SH NAME
+rsys \- Remote system() service
+.SH SYNOPSIS
+.nf
+\fB#include "rsys.h"\fP
+.sp
+
+.PP
+.BI "int rsystem(const char *" fmt ", ...);"
+
+.PP
+.BI "int rsys_lib_initialize(void);"
+
+.fi
+.SH DESCRIPTION
+
+
+The
+.B RSYS
+API provides a
+.BR "system"(3)-like
+service based on shared remanent background shells managed by
+.BR "rsystemd"(8)
+daemon. This saves memory and CPU time in applications where
+.BR "system"(3)
+is heavily used.
+
+.PP
+.B rsystem()
+executes the shell command line formatted with
+.IR "fmt".
+The behaviour of the format is compliant with
+.BR "printf"(3).
+Internally, the command is run by one of the remanent shells managed by
+.BR "rsystemd"(8). 
+
+
+.PP
+.B rsys_lib_initialize()
+is to be called in child processes using the
+.B RSYS
+API. By default,
+.B RSYS
+API is deactivated upon
+.BR "fork"(2).
+
+
+.SH ENVIRONMENT VARIABLE
+
+By default, the server socket pathname used for the client/server dialog is
+.BR "/var/run/rsys.socket".
+The
+.B RSYS_SOCKET_PATH
+environment variable is available to specify an alternate socket pathname if one needs to change it for access rights or any test purposes.
+
+.SH RETURN VALUE
+
+.PP
+.BR "rsystem()"
+returns the status of the executed command line (i.e. the last executed command). The returned value is a "wait status" that can be examined using the macros described in
+.BR "waitpid"(2)
+(i.e. WIFEXITED(), WEXITSTATUS(), and so on).
+
+.PP
+.BR "rsys_lib_initialize()"
+returns 0 when there are no error or -1 upon error (\fBerrno\fP is set).
+
+
+.SH MUTUAL EXCLUSION
+
+The service does not support concurrent calls to
+.BR "rsystem"()
+by multiple threads.
+If this behaviour is needed, the application is responsible to manage the mutual exclusion on its side.
+
+
+.SH EXAMPLE
+
+The following program receives a shell command as argument and executes it via a call to
+.BR "rsystem"().
+
+.nf
+
+#include <stdio.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <libgen.h>
+#include <stdlib.h>
+#include <string.h>
+#include <rsys.h>
+
+
+int main(int ac, char *av[])
+{
+int           status;
+int           i;
+char         *cmdline;
+size_t        len;
+size_t        offset;
+
+  if (ac < 2)
+  {
+    fprintf(stderr, "Usage: %s cmd params...\\n", basename(av[0]));
+    return 1;
+  }
+
+  // Build the command line
+  cmdline = 0;
+  len     = 1; // Terminating NUL
+  offset = 0;
+  for (i = 1; i < ac; i ++)
+  {
+    len += strlen(av[i]) + 1; // word + space
+    cmdline = (char *)realloc(cmdline, len);
+    assert(cmdline);
+    offset += sprintf(cmdline + offset, "%s ", av[i]);
+  } // End for
+
+  printf("Running '%s'...\\n", cmdline);
+
+  status = rsystem(cmdline);
+  if (status != 0)
+  {
+    fprintf(stderr, "Error from program (0x%x = %d)!\\n", status, status);
+    free(cmdline);
+    return(1);
+  } // End if
+
+  free(cmdline);
+
+  return(0);
+} // main
+
+
+Build the program:
+
+$ gcc trsys.c -o trsys -lrsys -lpdip -lpthread
+
+.fi
+
+Make sure that
+.BR "rsystemd"(8)
+is running. Then, run something like the following:
+
+.nf
+
+$ ./trsys echo example
+Running 'echo example '...
+example
+
+.fi
+
+
+
+.SH AUTHOR
+Rachid Koucha
+
+.SH "SEE ALSO"
+.BR "rsystemd"(8),
+.BR "system"(3).

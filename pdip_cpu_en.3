@@ -1,0 +1,273 @@
+.\" Format this file with the following command :
+.\" groff -man -Tascii  <file>
+.\"
+.TH PDIP_CPU 3  "FEBRUARY 2018" "API" "API"
+.SH NAME
+pdip_cpu \- CPU management for PDIP library
+.SH SYNOPSIS
+.nf
+\fB#include "pdip.h"\fP
+.sp
+
+.PP
+.BI "int pdip_cpu_nb(void);"
+.BI "unsigned char *pdip_cpu_alloc(void);"
+.BI "int pdip_cpu_free(unsigned char *" cpu ");"
+.BI "int pdip_cpu_zero(unsigned char *" cpu ");"
+.BI "int pdip_cpu_all(unsigned char *" cpu ");"
+.BI "int pdip_cpu_set(unsigned char *" cpu ", unsigned int " n ");"
+.BI "int pdip_cpu_isset(unsigned char *" cpu ", unsigned int " n ");"
+.BI "int pdip_cpu_unset(unsigned char *" cpu ", unsigned int " n ");"
+
+.fi
+.SH DESCRIPTION
+
+Those services are destined to manage the CPU affinity of the
+.B PDIP
+objects. In other words, they define the list of CPUs on which the processes controlled by the
+.B PDIP
+objects will run. The CPUs are described in an array of unsigned chars representing a bitmap. The CPUs numbered from 0 to N are respectively associated to the bits numbered from 0 to N in the bitmap. When a bit is set, this means that the associated CPU is keen to be used by the process controlled by the
+.B PDIP
+object.
+
+.PP
+.B pdip_cpu_nb()
+returns the number of active CPUs. When the
+.B PDIP
+library starts, it gets and store internally the number of running CPUs. This service merely returns this value.
+
+.PP
+.B pdip_cpu_alloc()
+allocates and return a bitmap corresponding to the number of running CPUs. This bitmap will be used by the following services.
+
+.PP
+.B pdip_cpu_free()
+frees a bitmap previously allocated through
+.BR "pdip_cpu_alloc"().
+
+.PP
+.B pdip_cpu_zero()
+resets a bitmap.
+
+.PP
+.B pdip_cpu_all()
+sets all the bits in a bitmap.
+
+.PP
+.B pdip_cpu_set()
+sets the bit number
+.I n
+in the
+.I cpu
+bitmap.
+
+.PP
+.B pdip_cpu_isset()
+checks if the bit number
+.I n
+is set in the
+.I cpu
+bitmap.
+
+.PP
+.B pdip_cpu_unset()
+unsets the bit number
+.I n
+in the
+.I cpu
+bitmap.
+
+.SH RETURN VALUE
+
+.PP
+.BR "pdip_cpu_nb()"
+returns the number of running CPUs.
+
+.PP
+.BR "pdip_cpu_alloc()"
+returns an array of unsigned chars describing the bitmap of CPUs or 0 in case of error (\fBerrno\fP is set).
+
+.PP
+.BR "pdip_cpu_free()",
+.BR "pdip_cpu_zero()",
+.BR "pdip_cpu_all()",
+.BR "pdip_cpu_set()"
+and
+.BR "pdip_cpu_unset()"
+return 0 when there are no error or -1 upon error (\fBerrno\fP is set).
+
+.PP
+.BR "pdip_cpu_isset()"
+returns non zero if the bit is set and 0 if it is not set. It returns -1 upon error (\fBerrno\fP is set).
+
+.SH ERRORS
+The functions may set
+.B errno
+with the following values:
+.TP
+.B EINVAL
+Invalid parameter
+.TP
+.B ENOSPC
+Memory allocation error
+
+.SH EXAMPLES
+
+The following program executes the "ps -e -o pid,ppid,psr,comm" command on the first and the last processor. The line corresponding to the "ps" process is caught to display the processor number on which it runs.
+
+.nf
+
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <libgen.h>
+#include "pdip.h"
+
+
+int main(int ac, char *av[])
+{
+pdip_t      pdip;
+char       *new_av[5];
+int         rc;
+char       *display;
+size_t      display_sz;
+size_t      data_sz;
+pdip_cfg_t  cfg;
+int         status;
+char        reg_expr[256];
+int         pid_prog;
+char       *processor;
+
+ (void)ac;
+ (void)av;
+
+  // Let the service manage the SIGCHLD signal as we don't fork/exec any
+  // other program
+  rc = pdip_configure(1, 0);
+  if (rc != 0)
+  {
+    fprintf(stderr, "pdip_configure(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Create a PDIP object and make it run the program
+  // on the last CPU
+  pdip_cfg_init(&cfg);
+  cfg.debug_level = 0;
+  cfg.cpu = pdip_cpu_alloc();
+
+  // Choose first and last CPU for the program
+  pdip_cpu_set(cfg.cpu, 0);
+  pdip_cpu_set(cfg.cpu, pdip_cpu_nb() - 1);
+  pdip = pdip_new(&cfg);
+  if (!pdip)
+  {
+    fprintf(stderr, "pdip_new(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  //pdip_set_debug_level(pdip, 4);
+
+  // Attach the "ps " command to the PDIP object
+  new_av[0] = "ps";
+  new_av[1] = "-e";
+  new_av[2] = "-o";
+  new_av[3] = "pid,ppid,psr,comm";
+  new_av[4] = (char *)0;
+  pid_prog = pdip_exec(pdip, 4, new_av);
+  if (pid_prog < 0)
+  {
+    fprintf(stderr, "pdip_exec(ps): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Make the regular expression to catch "ps" process in the result
+  // of the command
+  snprintf(reg_expr, sizeof(reg_expr), "%d([ ])+%d([ ])+([0-9])+([ ])+ps", pid_prog, getpid());
+
+  // Initialize the display buffer
+  display = (char *)0;
+  display_sz = 0;
+  data_sz = 0;
+
+  // Receive data
+  rc = pdip_recv(pdip, reg_expr, &display, &display_sz, &data_sz, 0);
+  if (rc != PDIP_RECV_FOUND)
+  {
+    fprintf(stderr, "Regular expression '%s' not found\\n", reg_expr);
+    return 1;
+  }
+
+  // Get processor number in the output of 'ps' command
+  processor = display + data_sz; // End of buffer
+  while (' ' != *processor) // Skip command name
+  {
+    processor --;
+  }
+  while (' ' == *processor) // Skip spaces between command and processor number
+  {
+    processor --;
+  }
+  *(processor + 1) = '\0'; // NUL terminate the processor number string
+  while (' ' != *processor) // Go to the beginning of the processor number string
+  {
+    processor --;
+  }
+  processor ++;
+  printf("'ps' runs on processor#%s\\n", processor);
+
+  // Wait for the end of "ps"
+  rc = pdip_status(pdip, &status, 1);
+  if (0 != rc)
+  {
+    fprintf(stderr, "pdip_status(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Delete the PDIP object
+  rc = pdip_delete(pdip, 0);
+  if (rc != 0)
+  {
+    fprintf(stderr, "pdip_delete(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Delete the CPU bitmap
+  pdip_cpu_free(cfg.cpu);
+
+  return 0;
+
+} // main
+
+.fi
+
+The execution of the previous program displays the following on a machine with 8 CPUs:
+
+.nf
+
+$ test/man_exe_3
+\'ps\' runs on processor#7
+
+.fi
+
+And sometimes it displays:
+
+.nf
+
+$ test/man_exe_3 
+\'ps\' runs on processor#0
+
+.fi
+
+
+.BR "rsystemd"(8)
+is another example of a little more complex application of this CPU affinity mechanism to launch shells on configurable CPU sets.
+
+.SH AUTHOR
+Rachid Koucha
+
+.SH "SEE ALSO"
+.BR pdip (1),
+.BR pdip (3).

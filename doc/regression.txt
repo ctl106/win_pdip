@@ -1,0 +1,75 @@
+                      HOW TO LAUNCH THE REGRESSION TESTS
+                      ==================================
+
+The regression tests are based on CHECK library. The latter must be installed
+prior to launch the tests.
+
+1/ THE WHOLE SOFTWARE
+   -------------------
+
+- To trigger all the regression tests:
+
+$ cd <top directory of PDIP sources>
+$ make clean (if a build as been done)
+$ cmake .  (the following must be displayed if CHECK is installed)
+[...]
+-- Found CHECK: /usr/local/lib/libcheck.so
+[...]
+$ make
+$ test/check_all
+[...]
+100%: Checks: 47, Failures: 0, Errors: 0
+
+
+2/ PDIP library
+   ------------
+
+- To trigger the regression tests of PDIP:
+
+$ cd <top directory of PDIP sources>
+$ make clean (if a build as been done)
+$ cmake .  (the following must be displayed if CHECK is installed)
+[...]
+-- Found CHECK: /usr/local/lib/libcheck.so
+[...]
+$ make
+$ test/check_pdip
+[...]
+100%: Checks: 37, Failures: 0, Errors: 0
+
+
+
+3/ ISYS library
+   ------------
+
+- To trigger the regression tests of ISYS:
+
+$ cd <top directory of PDIP sources>
+$ make clean (if a build as been done)
+$ cmake .  (the following must be displayed if CHECK is installed)
+[...]
+-- Found CHECK: /usr/local/lib/libcheck.so
+[...]
+$ make
+$ test/check_isys
+[...]
+100%: Checks: 4, Failures: 0, Errors: 0
+
+
+4/ RSYS library
+   ------------
+
+- To trigger the regression tests of RSYS:
+
+$ cd <top directory of PDIP sources>
+$ make clean (if a build as been done)
+$ cmake .  (the following must be displayed if CHECK is installed)
+[...]
+-- Found CHECK: /usr/local/lib/libcheck.so
+[...]
+$ make
+$ test/check_rsys
+[...]
+100%: Checks: 5, Failures: 0, Errors: 0
+Cleanup...
+

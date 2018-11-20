@@ -1,0 +1,81 @@
+        HOW TO LAUNCH PDIP TEST COVERAGE MEASUREMENT
+        ============================================
+
+1/ PDIP library
+
+- To trigger test coverage measurement mode:
+
+$ cd <top directory of PDIP sources>
+$ make clean (if a build as been done)
+$ cmake -DCMAKE_COVERAGE=1 -DCMAKE_BUILD_TYPE=Debug .
+$ make
+$ make pdip_coverage
+
+Then, open ./pdip_coverage/index.html in your browser to view the coverage report.
+
+
+- To go back in design mode:
+
+$ make clean
+$ cmake .
+$ make
+
+
+2/ ISYS library
+
+- To trigger test coverage measurement mode:
+
+$ cd <top directory of PDIP sources>
+$ make clean (if a build as been done)
+$ cmake -DCMAKE_COVERAGE=1 -DCMAKE_BUILD_TYPE=Debug .
+$ make
+$ make isys_coverage
+
+Then, open ./isys_coverage/index.html in your browser to view the coverage report.
+
+
+- To go back in design mode:
+
+$ make clean
+$ cmake .
+$ make
+
+
+3/ RSYS library
+
+- To trigger test coverage measurement mode:
+
+$ cd <top directory of PDIP sources>
+$ make clean (if a build as been done)
+$ cmake -DCMAKE_COVERAGE=1 -DCMAKE_BUILD_TYPE=Debug .
+$ make
+$ make rsys_coverage
+
+Then, open ./rsys_coverage/index.html in your browser to view the coverage report.
+
+
+- To go back in design mode:
+
+$ make clean
+$ cmake .
+$ make
+
+
+4/ All the project
+
+- To trigger test coverage measurement mode:
+
+$ cd <top directory of PDIP sources>
+$ make clean (if a build as been done)
+$ cmake -DCMAKE_COVERAGE=1 -DCMAKE_BUILD_TYPE=Debug .
+$ make
+$ make all_coverage
+
+Then, open ./all_coverage/index.html in your browser to view the coverage report.
+
+
+- To go back in design mode:
+
+$ make clean
+$ cmake .
+$ make

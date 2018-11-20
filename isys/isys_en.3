@@ -1,0 +1,150 @@
+.\" Format this file with the following command :
+.\" groff -man -Tascii  <file>
+.\"
+.TH ISYS 3  "MARCH 2018" "API" "API"
+.SH NAME
+isys \- Interactive system() service
+.SH SYNOPSIS
+.nf
+\fB#include "isys.h"\fP
+.sp
+
+.PP
+.BI "int isystem(const char *" fmt ", ...);"
+
+.PP
+.BI "int isys_lib_initialize(void);"
+
+
+.fi
+.SH DESCRIPTION
+
+The
+.B ISYS
+API provides a
+.BR "system"(3)-like
+service based on a remanent background shell to save memory and CPU time in applications where
+.BR "system"(3)
+is heavily used.
+
+.PP
+.B isystem()
+executes the shell command line formatted with
+.IR "fmt".
+The behaviour of the format is compliant with
+.BR "printf"(3).
+Internally, the command is run by a remanent shell created by the
+.B libisys.so
+library in a child of the current process.
+
+
+.PP
+.B isys_lib_initialize()
+is to be called in child processes using the
+.B ISYS
+API. By default,
+.B ISYS
+API is deactivated upon
+.BR "fork"(2).
+
+.SH ENVIRONMENT VARIABLE
+
+The
+.B ISYS_TIMEOUT
+environment variable specifies the maximum time in seconds to wait for data from the shell (by default, it is 10 seconds).
+
+.SH RETURN VALUE
+
+.PP
+.BR "isystem()"
+returns the status of the executed command line (i.e. the last executed command). The returned value is a "wait status" that can be examined using the macros described in
+.BR "waitpid"(2)
+(i.e. WIFEXITED(), WEXITSTATUS(), and so on).
+
+.PP
+.BR "isys_lib_initialize()"
+returns 0 when there are no error or -1 upon error (\fBerrno\fP is set).
+
+.SH MUTUAL EXCLUSION
+
+The service does not support concurrent calls to
+.BR "isystem"()
+by multiple threads.
+If this behaviour is needed, the application is responsible to manage the mutual exclusion on its side.
+
+
+.SH EXAMPLE
+
+The following program receives a shell command as argument and executes it via a call to
+.BR "isystem"().
+
+.nf
+
+#include <stdio.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <libgen.h>
+#include <stdlib.h>
+#include <string.h>
+#include <isys.h>
+
+
+int main(int ac, char *av[])
+{
+int     status;
+int     i;
+char   *cmdline;
+size_t  len;
+size_t  offset;
+
+  if (ac < 2)
+  {
+    fprintf(stderr, "Usage: %s cmd params...\\n", basename(av[0]));
+    return 1;
+  }
+
+  // Build the command line
+  cmdline = (char *)0;
+  len     = 1; // Terminating NUL
+  offset = 0;
+  for (i = 1; i < ac; i ++)
+  {
+    len += strlen(av[i]) + 1; // word + space
+    cmdline = (char *)realloc(cmdline, len);
+    assert(cmdline);
+    offset += sprintf(cmdline + offset, "%s ", av[i]);
+  } // End for
+
+  printf("Running '%s'...\\n", cmdline);
+
+  status = isystem(cmdline);
+  if (status != 0)
+  {
+    printf("Error from program (0x%x)!\\n", status);
+    free(cmdline);
+    return  1;
+  } // End if
+
+  free(cmdline);
+  return 0;
+} // main
+
+
+Build the program:
+
+$ gcc tisys.c -o tisys -lisys -lpdip -lpthread
+
+Then, run something like the following:
+
+$ ./tisys echo example
+Running 'echo example '...
+example
+
+.fi
+
+
+.SH AUTHOR
+Rachid Koucha
+
+.SH "SEE ALSO"
+.BR system (3).

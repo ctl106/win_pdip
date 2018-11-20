@@ -1,0 +1,115 @@
+.\" Format this file with the following command :
+.\" groff -man -Tascii  <file>
+.\"
+.TH "RSYSTEMD" 8  "APRIL 2018" "" "Linux system administration"
+.SH NAME
+rsystemd \- Remote system() daemon
+.SH SYNOPSIS
+.nf
+
+.BI "rsystemd [-s shells] [-V] [-d level] [-D] [-h]"
+
+.fi
+.SH DESCRIPTION
+
+.B rsystemd
+is a daemon which manages several childs processes running shells. It is a server for the
+.BR "rsystem"(3)
+service.
+
+
+.SH OPTIONS
+
+.TP
+.BI "-s | --shells shell_list"
+Shells to launch along with their CPU affinity. This may be overriden by the
+.B RSYSD_SHELLS
+environment variable. The content is a colon delimited list of affinities for shells to launch. An affinity is defined as follow:
+.RS
+.IP
+* A comma separated list of fields
+.IP
+* A field is either a CPU number or an interval of consecutive CPU numbers described with the first and last CPU numbers separated by an hyphen.
+.IP
+* An empty field implicitely means all the active CPUs
+.IP
+* A CPU number is from 0 to the number of active CPUs minus 1
+.IP
+* If the first CPU number of an interval is empty, it is considered to be CPU number 0
+.IP
+* If the last CPU number of an interval is empty, it is considered to be the biggest active CPU number
+.RE
+.TP
+.BI ""
+If a CPU number is bigger than the maximum active CPU number, it is implicitely translated into the maximum active CPU number.
+.TP
+.BI ""
+If this option is not specified, the default behaviour is one shell running on all available CPUs.
+.TP
+.BI "-V | --version"
+Display the daemon's version
+
+.TP
+.BI "-D | --daemon"
+Activate the daemon mode (the process detaches itself from the current terminal and becomes a child
+of init, process number 1).
+
+.TP
+.BI "-d | --debug level"
+Set the debug level. The higher the value, the more traces are displayed.
+
+.TP
+.BI "-h | --help"
+Display the help
+
+
+.SH ENVIRONMENT VARIABLE
+
+By default, the server socket pathname used for the client/server dialog is
+.BR "/var/run/rsys.socket".
+The
+.B RSYS_SOCKET_PATH
+environment variable is available to specify an alternate socket pathname if one needs to change it for access rights or any test purposes. It is advised to specify an absolute pathname especially
+in daemon mode where the server changes its current directory to the root of the filesystem. Consequently, any relative pathname will be considered from the server's current directory. 
+
+.SH EXAMPLES
+
+The following launches a shell running on CPU number 3 and CPU numbers 6 to 8. We use
+.B sudo
+as
+.B rsystemd
+creates a named socket in /var/run.
+. nf
+
+  $ sudo systemd -s 3,6-8
+
+.fi
+
+The following launches three shells. The first runs on CPU numbers 0 to 3, CPU number 5 and CPU number 6. The second runs on CPU number 0 and CPU numbers 3 to the latest active CPU. The third runs on all the active CPUs.
+.nf
+
+  $ sudo systemd -s -3,5,6:0,3-:
+
+.fi
+
+The following launches one shell through the
+.B RSYSD_SHELLS
+environment variable. We pass -E option to
+.B sudo
+to preserve the environment otherwise
+.B RSYSD_SHELLS
+would not be taken in account. The environment variable overrides the parameter passed to
+.BR "rsystemd".
+The affinity of the shell are CPU number 1 and 3.
+.nf
+
+  $ export RSYSD_SHELLS=1,3
+  $ sudo -E systemd -s -3,5,6:0,3-:
+
+.fi
+
+.SH AUTHOR
+Rachid Koucha
+
+.SH "SEE ALSO"
+.BR "rsystem"(3).

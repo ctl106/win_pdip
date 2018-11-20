@@ -1,0 +1,44 @@
+#!/bin/bash
+
+INSTALL_PREFIX=/usr/local
+
+chmod 644  ${INSTALL_PREFIX}/lib/pkgconfig/pdip.pc
+chown root ${INSTALL_PREFIX}/lib/pkgconfig/pdip.pc
+chgrp root ${INSTALL_PREFIX}/lib/pkgconfig/pdip.pc
+
+chmod 555  ${INSTALL_PREFIX}/bin/pdip
+chown root ${INSTALL_PREFIX}/bin/pdip
+chgrp root ${INSTALL_PREFIX}/bin/pdip
+
+chmod 444  ${INSTALL_PREFIX}/lib/libpdip.so
+chown root ${INSTALL_PREFIX}/lib/libpdip.so
+chgrp root ${INSTALL_PREFIX}/lib/libpdip.so
+
+chmod 444  ${INSTALL_PREFIX}/include/pdip.h
+chown root ${INSTALL_PREFIX}/include/pdip.h
+chgrp root ${INSTALL_PREFIX}/include/pdip.h
+
+chmod 444  ${INSTALL_PREFIX}/share/man/fr/man1/pdip.1.gz
+chown root ${INSTALL_PREFIX}/share/man/fr/man1/pdip.1.gz
+chgrp root ${INSTALL_PREFIX}/share/man/fr/man1/pdip.1.gz
+
+chmod 444  ${INSTALL_PREFIX}/share/man/fr/man3/pdip.3.gz
+chown root ${INSTALL_PREFIX}/share/man/fr/man3/pdip.3.gz
+chgrp root ${INSTALL_PREFIX}/share/man/fr/man3/pdip.3.gz
+
+chmod 444  ${INSTALL_PREFIX}/share/man/fr/man3/pdip_*.3.gz
+chown root ${INSTALL_PREFIX}/share/man/fr/man3/pdip_*.3.gz
+chgrp root ${INSTALL_PREFIX}/share/man/fr/man3/pdip_*.3.gz
+
+chmod 444  ${INSTALL_PREFIX}/share/man/man1/pdip.1.gz
+chown root ${INSTALL_PREFIX}/share/man/man1/pdip.1.gz
+chgrp root ${INSTALL_PREFIX}/share/man/man1/pdip.1.gz
+
+chmod 444  ${INSTALL_PREFIX}/share/man/man3/pdip.3.gz
+chown root ${INSTALL_PREFIX}/share/man/man3/pdip.3.gz
+chgrp root ${INSTALL_PREFIX}/share/man/man3/pdip.3.gz
+
+chmod 444  ${INSTALL_PREFIX}/share/man/man3/pdip_*.3.gz
+chown root ${INSTALL_PREFIX}/share/man/man3/pdip_*.3.gz
+chgrp root ${INSTALL_PREFIX}/share/man/man3/pdip_*.3.gz
+

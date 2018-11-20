@@ -1,0 +1,1357 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"><title>Programmed Dialogues with Interactive Programs (PDIP)</title>
+  
+  <meta name="author" content="rachid koucha">
+  <meta name="Category" content="PDIP, expect, PTY, pseudo-terminals, linux, freeware, telnet">
+  <meta name="language" content="en">
+  <meta http-equiv="Content-Language" content="en">
+  <meta name="description" content="PDIP stands for Programmed Dialogue with Interactive Programs. This is an expect-like tool designed to automatize the execution of programs which normally need human intervention.">
+  <meta name="keywords" content="PDIP, isys, rsys, expect, PTY, pseudo-terminals, linux, freeware, telnet"></head><body>
+<small><small><big><a href="http://rachid.koucha.free.fr/index.html">Back
+to
+home
+page</a><br>
+<a href="http://rachid.koucha.free.fr/freeware.html">Back to
+previous page</a></big></small></small><small><small><span style="text-decoration: underline;"><br>
+</span></small></small>
+<table style="text-align: left; width: 100%;" border="0" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td><small><small><span style="text-decoration: underline;">Author</span>:
+
+
+
+      <a href="http://rachid.koucha.free.fr">R.
+Koucha</a><br>
+      <span style="text-decoration: underline;">Last update</span>: 13-Apr-2018</small> <br>
+      </small></td>
+      <td style="text-align: center;"> <a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=208226&amp;type=5" alt="SourceForge.net Logo" border="0" height="62" width="210"></a></td>
+      <td>
+      <div style="text-align: center;"> <a href="http://sourceforge.net/donate/index.php?group_id=208226"><img src="http://images.sourceforge.net/images/project-support.jpg" alt="Support This Project" border="0" height="32" width="88"> </a></div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<small><br>
+</small>
+<h1 style="text-align: center;"><small>Programmed
+Dialogue with Interactive Programs</small></h1>
+<h1 style="text-align: center;"><small>(<a href="https://sourceforge.net/projects/pdip">PDIP</a>)</small></h1>
+<table style="text-align: left; margin-left: auto; margin-right: auto;">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(153, 153, 153);">
+      <script type="text/javascript"><!--
+google_ad_client = "pub-9113501896220746";
+/* 728x90, date de création 29/03/08 */
+google_ad_slot = "7632855209";
+google_ad_width = 728;
+google_ad_height = 90;
+//--></script>
+      <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<a href="#Introduction">Introduction</a><br>
+<a href="#Usage">Usage of the command</a><br>
+<a href="#Examples">Examples with the command</a><br>
+<a href="#API">Application programming Interface (API)</a><br>
+<a href="#Download">Download</a><br>
+<a href="#Installation">Installation &amp; build</a><br>
+<a href="#About_the_author">About the author</a><br>
+<a href="#Related_links">Related links</a><br>
+<br>
+<hr style="width: 100%; height: 2px;">
+<h2><a name="Introduction"></a>Introduction</h2>
+<br>
+<b>PDIP</b> stands for <span style="font-weight: bold;">P</span>rogrammed
+<span style="font-weight: bold;">D</span>ialogue
+with <span style="font-weight: bold;">I</span>nteractive
+<span style="font-weight: bold;">P</span>rograms. It
+is&nbsp; a command line oriented utility looking like a
+simplified&nbsp; version&nbsp; of the famous <a href="http://expect.sourceforge.net/">EXPECT</a> utility. The
+acronym PDIP itself comes from the first lines of the manual of <a href="http://expect.sourceforge.net/">EXPECT</a>.&nbsp;
+Like <a href="http://expect.sourceforge.net/">EXPECT</a>,&nbsp;
+it&nbsp; is a freeware and it interprets a scripting language to
+dialog
+with an interactive program as a human operator would do. But it has
+not all the bells and whistles of <a href="http://expect.sourceforge.net/">EXPECT</a>
+which is able to interact with multiple programs&nbsp; at the same
+time, accept a high level scripting language providing branching and
+high level control structures or giving back the control to the
+operator during a session.<br>
+<br>
+<b>PDIP</b> accepts a very simple language on the input to provide basic
+functions such as:<br>
+<ul>
+  <li>Filtering the program&#8217;s output to catch a string
+matching a given pattern</li>
+  <li>Sending strings of characters to the program</li>
+  <li>Stopping interactions with the program during a given
+amount of seconds</li>
+</ul>
+<br>
+<b>PDIP</b> has been designed to run under any Linux operating system.<br>
+<br>
+The command to launch along with its options and parameters is passed
+at the end of the command line. If options are passed to pdip and/or
+the command, then&nbsp; the&nbsp; command&nbsp;
+must&nbsp; be
+preceded&nbsp; by&nbsp; a double hyphen (--). Otherwise the
+options
+will be passed to pdip and will trigger errors.<br>
+<br>
+For C language programmers, <b>PDIP</b> provides a C language <a href="#API"><B>Application Programming Interface (API)</B></a> to give the ability to pilot processes from an application process.
+<hr style="width: 100%; height: 2px;">
+<h2><a name="Usage"></a>Usage of the command</h2>
+The command line to launch <b>PDIP</b> looks like:<br>
+<br>
+<span style="font-family: monospace;">pdip [ <a href="#-s">-s</a>
+cmdfile ] [ <a href="#-b">-b</a> buffer-size ] [ <a href="#-d">-d</a>
+level ] [ <a href="#-h">-h</a> ]
+[ <a href="#-V">-V</a> ] [ <a href="#-e">-e</a> ] [ <a href="#-t">-t</a>
+] [ <a href="#-o">-o</a> ] </span><span style="font-family: monospace;"></span><span style="font-family: monospace;">[ <a href="#-p">-p</a> ]</span><span style="font-family: monospace;">-- command options
+parameters...</span><br>
+<br>
+<br>
+The&nbsp;options are:<br>
+<br>
+<div style="margin-left: 40px;"><span style="font-weight: bold;"><a name="-b"></a>-b
+buffer-size |
+--bufsz=buffer-size</span><br>
+Size in bytes of the internal I/O buffer (default: 512).<br>
+<span style="font-weight: bold;"></span><br>
+<span style="font-weight: bold;"><a name="-d"></a>-d
+| --debug</span><br>
+Set the debug mode. It is helpful to understand why a command script
+does not&nbsp; work as expected.<span style="font-weight: bold;"><br>
+<br>
+<a name="-h"></a>
+-h | --help</span><br>
+Display the help of the command (subset of this man page).<br>
+<br>
+<span style="font-weight: bold;"><a name="-s"></a>-s
+cmdfile |
+--script=cmdfile</span><br>
+Script of input commands (default stdin). <b>PDIP</b> reads cmdfile or the
+standard input (default) and accepts the
+following commands:<br>
+<br>
+<div style="margin-left: 40px;"><span style="font-weight: bold;">#...</span><br>
+# and the following words up to the end of line are ignored (used for
+comments)<br>
+<br>
+<span style="font-weight: bold;">dbg level</span><br>
+Set the debug level to level.&nbsp; The higher the level, the more
+traces you get. The value 0 deactivates the debug mode.<br>
+<br>
+</div>
+<div style="margin-left: 40px;"><span style="font-weight: bold;">timeout
+x</span><br>
+Set&nbsp; to&nbsp; x&nbsp; seconds the maximum time to wait
+on each
+following commands (the value 0 cancels the timeout, this is the
+default)<br>
+<br>
+<span style="font-weight: bold;">recv "w1 w2..."</span><br>
+Wait for a line with the pattern w1 w2...&nbsp; from the program.
+The
+pattern is&nbsp; regular expression conforming to regex (cf.
+Section 7
+of Linux manual).<br>
+<br>
+<span style="font-weight: bold;">send "w1 w2..."</span><br>
+Send&nbsp; the string w1 w2...&nbsp; to the program.<br>
+<br>
+<span style="font-weight: bold;">print "w1 w2..."</span><br>
+Print the string w1 w2...&nbsp; onto the standard output.<br>
+<br>
+For both <span style="font-weight: bold;">send</span> and <span style="font-weight: bold;">print</span> commands, the string may
+contain control characters with the notation "^character". For example,
+"^C" means CONTROL C. The following shortcuts are also accepted:<br>
+<br>
+</div>
+<div style="margin-left: 80px;">\a Bell<br>
+\b Backspace<br>
+\t Horizontal tabulation<br>
+\n New line<br>
+\v Vertical tabulation<br>
+\f Form feed<br>
+\r Carriage return<br>
+\" Double quote<br>
+\\ Backslash<br>
+\[ Escape<br>
+\] Group Separatorroup Separator<br>
+\^ ^ character<br>
+<br>
+</div>
+<div style="margin-left: 40px;"><span style="font-weight: bold;">sig
+signame<br>
+</span>Send the Linux signal <span style="font-weight: bold;">signame</span>
+to the program.&nbsp; <span style="font-weight: bold;">signame</span>
+is one of: HUP, INT, QUIT, ILL, TRAP, ABRT, BUS, FPE, KILL, USR1, SEGV,
+USR2, PIPE, ALRM, TERM.<span style="font-weight: bold;"><br>
+<br>
+sleep x</span><br>
+Stop activity during x seconds<br>
+<br>
+<span style="font-weight: bold;">exit</span><br>
+Terminate PDIP<br>
+<br>
+<span style="font-weight: bold;">sh [-s] cmd par...<br>
+</span>Launch the <span style="font-weight: bold;">cmd par...</span>&nbsp; shell command (synchronously if <span style="font-weight: bold;">-s</span> is specified).<span style="font-weight: bold;"><br>
+</span>
+</div>
+<br>
+<span style="font-weight: bold;"><a name="-V"></a>-V
+| --version</span><br>
+Display the version of the software.<br>
+</div>
+<br>
+<div style="margin-left: 40px;"><span style="font-weight: bold;"><a name="-e"></a>-e | --error</span><br>
+Redirect error output of the controlled program.<br>
+</div>
+<br>
+<div style="margin-left: 40px;"><span style="font-weight: bold;"><a name="-t"></a>-t | --term</span><br>
+Make pdip behave as a simple line mode terminal.<br>
+</div>
+<br>
+<div style="margin-left: 40px;"><span style="font-weight: bold;"><a name="-o"></a>-o | --outstand</span><br>
+Make pdip print unread data from the controlled program at the end of
+the session.<br>
+<br>
+<span style="font-weight: bold;"><a name="-p"></a>-p | --propexit<br>
+</span>Propagate&nbsp; the&nbsp; exit&nbsp; code of the controlled
+program to <span style="font-weight: bold;">pdip</span>.&nbsp; This
+makes <span style="font-weight: bold;">pdip</span> exit with the exit
+code of the controlled program (the exit code is 1 if the controlled
+program terminates because of a signal). By default, the exit code of <span style="font-weight: bold;">pdip</span> is 0 no matter the exit code of
+the controlled program&nbsp; unless there is an error internal to <span style="font-weight: bold;">pdip</span>.<span style="font-weight: bold;"><br>
+</span></div>
+<br>
+
+<div style="margin-left: 40px;"><span style="font-weight: bold;"><a name="-p"></a>-R | --backread<br>
+</span>Read and store in background incoming data from controlled program even when no 'recv' command is on track. This avoids the blocking of the controlled program on a 'write' system call because of the saturation of the internal pseudo-terminal buffer when <span style="font-weight: bold;">pdip</span> is not in a data reception state (i.e. 'recv' command). But this makes <span style="font-weight: bold;">pdip</span> allocate dynamic memory to store the pending read data.
+</div>
+<br>
+
+<hr style="width: 100%; height: 2px;">
+<h2><a name="Examples"></a>Examples with the command</h2>
+The&nbsp; following&nbsp; example&nbsp; shows&nbsp;
+how&nbsp; to&nbsp;
+set up a telnet connection to a given host called
+&#8217;remote&#8217;
+on&nbsp; the&nbsp; TCP&nbsp; port&nbsp; 34770 with the
+login name
+&#8217;foo&#8217; and password
+&#8217;bar&#8217;.&nbsp; Since the remote port is specified with an
+option (-p), it is mandatory to put a&nbsp; double&nbsp;
+hyphen&nbsp;
+(--) before&nbsp; the command to launch. Commands are injected on
+the
+standard&nbsp;
+input.&nbsp; We wait for the &#8217;$&#8217; prompt and
+launch the
+ls(1) command before disconnecting from the shell via the exit
+command.<br>
+<br>
+<div style="margin-left: 40px;"><span style="font-family: monospace;">$
+pdip -- telnet -p 34770
+remote</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv "login"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send
+"foo\n"&nbsp;&nbsp; # Login name is &#8217;foo&#8217;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv "Password"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send
+"bar\n"&nbsp;&nbsp; # Password is &#8217;bar&#8217;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv "\$
+"&nbsp;&nbsp;&nbsp;&nbsp; # Inhibition of the
+metacharacter &#8217;$&#8217; with &#8217;\&#8217;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send
+"ls\n"&nbsp;&nbsp;&nbsp; # Launch the
+&#8217;ls&#8217; command</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv "\$ "</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send
+"exit\n"&nbsp; # Exit from the shell</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">exit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+#
+Exit
+from
+PDIP</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">$</span><br>
+</div>
+<br>
+The following example shows how to set up a ftp&nbsp;
+connection&nbsp; to&nbsp; a&nbsp; given&nbsp;
+host&nbsp; called
+&#8217;remote&#8217; with the login name
+&#8217;foo&#8217; and password
+&#8217;bar&#8217;.&nbsp; Commands are injected on the
+standard input.
+We wait for the &#8217;ftp&gt;&#8217; prompt at the
+beginning of&nbsp;
+the&nbsp; line&nbsp; and&nbsp; launch&nbsp; the
+&#8217;help&#8217;
+command before disconnecting from ftp with the
+&#8217;quit&#8217;
+command.<br>
+<br>
+<div style="margin-left: 40px;"><span style="font-family: monospace;">$
+pdip&nbsp;ftp remote</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv "Name"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send
+"foo\n"&nbsp;&nbsp;&nbsp; # Login name is
+&#8217;foo&#8217;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv "Password"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send
+"bar\n"&nbsp;&nbsp;&nbsp; # Password is
+&#8217;bar&#8217;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv "^ftp&gt;
+"&nbsp;&nbsp; # Prompt at beginning of line</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send
+"help\n"&nbsp;&nbsp; # Launch the &#8217;help&#8217;
+command</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv "^ftp&gt; "</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send
+"quit\n"&nbsp;&nbsp; # Terminate FTP</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">exit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+#
+Exit
+from
+PDIP</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">$</span><br>
+</div>
+<br>
+The&nbsp; following example shows how to interact with the program
+bc which does not display any prompt. We use the metacharacter
+&#8217;$&#8217; to synchronize on end of&nbsp;
+lines.&nbsp; Two&nbsp;
+operations are launched &#8217;3+4&#8217; and
+&#8217;6*8&#8217;. Then
+we quit bc.<br>
+<br>
+<div style="margin-left: 40px;"><span style="font-family: monospace;">$
+pdip&nbsp;bc</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv
+"warranty"&nbsp; # Near the end of the startup banner</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv
+"$"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+# End of last line of the banner</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send "3+4\n"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv
+"$"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+# Receive the end of line of the echo</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv
+"$"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+# Receive the end of line of the result</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send "6*8\n"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv "$"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv "$"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send
+"quit\n"&nbsp;&nbsp; # Terminate BC</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">exit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+#
+Exit
+from
+PDIP</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">$</span><br style="font-family: monospace;">
+</div>
+<br>
+The following example shows how to set up a telnet(1)
+connection&nbsp;
+to&nbsp; a&nbsp; given&nbsp; host&nbsp; called
+&#8217;remote&#8217;&nbsp; with&nbsp; the login name &#8217;foo&#8217;
+and password &#8217;bar&#8217;.&nbsp; Commands are injected on the
+standard&nbsp; input.&nbsp; With&nbsp; a&nbsp;
+regular&nbsp;
+expression,&nbsp; we&nbsp; wait&nbsp;&nbsp;
+for&nbsp;&nbsp;
+the&nbsp;&nbsp; prompt&nbsp;&nbsp;
+of&nbsp;&nbsp; the&nbsp;&nbsp; form
+"xxxx-&lt;login_name&gt;-pathname&gt;&nbsp; "&nbsp;
+or&nbsp;
+"xxxx-&lt;login_name&gt;-pathname&gt;"&nbsp;
+at&nbsp; the beginning of
+the line.&nbsp; Then we launch the &#8217;ls -l&#8217; command&nbsp;
+before&nbsp; disconnecting&nbsp; from&nbsp;
+telnet(1)&nbsp; with&nbsp;
+the &#8217;exit&#8217; command.<br>
+<br>
+<div style="margin-left: 40px;"><span style="font-family: monospace;">$
+pdip telnet remote</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv "login:"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send
+"foo\n"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+#
+Login
+name
+is &#8217;foo&#8217;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv "Password:"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send
+"bar\n"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+#
+Password
+is
+&#8217;bar&#8217;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv
+"^(.)+-foo-(.)+(&gt;|&gt; )$"&nbsp; # Prompt at beginning
+of line</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send "ls
+-l\n"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+#
+Launch
+the
+&#8217;ls -l&#8217; command</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">recv
+"^(.)+-foo-(.)+(&gt;|&gt; )$"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">send
+"exit\n"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+#
+Terminate
+telnet</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">exit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+#
+Exit
+from
+PDIP</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">$</span><br style="font-family: monospace;">
+</div>
+<br style="font-family: monospace;">
+
+<br style="font-family: monospace;">
+<hr style="width: 100%; height: 2px; font-family: monospace;">
+<h2><a style="font-family: monospace;" name="API"></a>Application Programming Interface (API)</h2>
+<br>
+
+
+<a href="#Synopsis">Synopsis</a><br>
+<a href="#Description">Description</a><br>
+<a href="#Return value">Return value</a><br>
+<a href="#Errors">Errors</a><br>
+<a href="#Mutual exclusion">Mutual exclusion</a><br>
+<a href="#Examples api">Examples</a><br>
+<br>
+
+
+
+<a name="Synopsis"></a><h3>Synopsis</h3>
+
+       #include "<B>pdip.h</B>"<br><br>
+
+       int <a href="#pdip_configure">pdip_configure</a>(int sig_hdl_internal, int debug_level);<br><br>
+
+       int <a href="#pdip_cfg_init">pdip_cfg_init</a>(pdip_cfg_t *cfg);<br>
+       pdip_t <a href="#pdip_new">pdip_new</a>(pdip_cfg_t *cfg);<br>
+       int <a href="#pdip_delete">pdip_delete</a>(pdip_t ctx, int *status);<br><br>
+
+       int <a href="#pdip_exec">pdip_exec</a>(pdip_t ctx, int ac, char *av[]);<br>
+       int <a href="#pdip_fd">pdip_fd</a>(pdip_t ctx);<br><br>
+
+       int <a href="#pdip_set_debug_level">pdip_set_debug_level</a>(pdip_t ctx, int level);<br><br>
+
+       int <a href="#pdip_send">pdip_send</a>(pdip_t ctx, const char *format, ...);<br>
+       int <a href="#pdip_recv">pdip_recv</a>(pdip_t *ctx, const char *regular_expr, char **display, size_t *display_sz, size_t *data_sz, struct timeval *timeout);<br>
+       int <a href="#pdip_sig">pdip_sig</a>(pdip_t ctx, int sig);<br>
+       int <a href="#pdip_flush">pdip_flush</a>(pdip_t ctx, char **display, size_t *display_sz, size_t *data_sz);<br>
+       int <a href="#pdip_status">pdip_status</a>(pdip_t ctx, int *status, int blocking);<br><br>
+
+       int <a href="#pdip_lib_initialize">pdip_lib_initialize</a>(void);<br><br>
+
+<a name="Description"></a><h3>Description</h3>
+
+The <B>PDIP</B> API is a C language library named <B>libpdip.so</B> providing the ability to control terminal oriented interactive processes by simulating an operator. Each controlled process is associated to a <B>PDIP</B> object.<br><br>
+The transition diagram of a <b>PDIP</b> object as well as the services applicable to each state are depicted below:
+<br><br>
+
+<img alt="state diagram" src="state_diagram.png">
+
+<br><br>
+<a name="pdip_configure"></a><B>pdip_configure</B>() is supposed to be called prior any other service as it configures some internals of the library:<br>
+
+<ul>
+       <li><B>sig_hdl_internal</B></li>
+              If set to a value different than 0, the library manages the <B>SIGCHLD</B> signal of the dead child processes internally. If it is set to 0, the application is supposed to call:<br><br>
+
+              int <B>pdip_signal_handler</B>(int sig, siginfo_t *info);<br><br>
+
+              to  let the library manage the <B>SIGCHLD</B> signal concerning the child processes that it launched internally. The parameters passed to this callback are sig which must be equal to <B>SIGCHLD</B> (may be other signal will be managed later) and info, the signal information passed by Linux to the signal handler when declared through <B>sigaction</B>(2). The function returns <B>PDIP_SIG_HANDLED</B>, if the <B>SIGCHLD</B> signal belonged to one of its <B>PDIP</B> objects, <B>PDIP_SIG_UNKNOWN</B> if the signal does not concern any of its <B>PDIP</B> objects or <B>PDIP_SIG_ERROR</B>, in case of error. When the return code is <B>PDIP_SIG_UNKNOWN</B>, the application is supposed to manage the signal on its side. In the case where this function returns <b>PDIP_SIG_HANDLED</b>, the application must not get the status of the child process with calls like <b>wait</b>(2) or <b>waitpid</b>(2).
+If needed, <a href="#pdip_status">pdip_status</a>() provides the status.<br><br>
+
+       <li><B>debug_level</B></li>
+              The global debug level of the service. The higher the value, the more debug messages are displayed. 0, disables the debug messages. This parameter can also be set by a call to <a href="#pdip_set_debug_level">pdip_set_debug_level</a>().
+</ul>
+<br><br>
+If a configuration structure is passed to <a href="#pdip_new">pdip_new</a>(), it is advised to call
+<a name="pdip_cfg_init"></a><b>pdip_cfg_init</b>()
+which initializes the <b>cfg</b> configuration structure to its default values. Using this call makes any future evolutions to the structure transparent to the applications designed
+with older versions of the library. The structure is described below in the presentation of <a href="#pdip_new">pdip_new</a>().
+<br><br>
+<a name="pdip_new"></a><B>pdip_new</B>() creates a <B>PDIP</B> object. To configure the object, the function is passed an optional parameter <b>cfg</b> of type:<br><br>
+<font face = "courier new">
+       typedef struct<br>
+       {<br>
+         &nbsp;&nbsp;FILE *dbg_output;&nbsp;&nbsp;// Stream into which are displayed the debug messages<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// of the <b>PDIP</b> object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// If NULL, it defaults to stderr<br>
+         &nbsp;&nbsp;FILE *err_output;&nbsp;&nbsp;// Stream into which are displayed the error messages<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// of the <b>PDIP</b> object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// If NULL, it defaults to stderr<br>
+<br>
+         &nbsp;&nbsp;int debug_level;&nbsp;&nbsp;&nbsp;// Debug level of the <b>PDIP</b> object. The higher the value, the more debug<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// messages are displayed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Default: 0 (no debug messages)<br>
+<br>
+&nbsp;&nbsp;unsigned int flags;<br>
+#define <b>PDIP_FLAG_ERR_REDIRECT</b>   0x01&nbsp;// If set, the stderr of the controlled process is also<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// redirected to the main program.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Otherwise, it is inherited from the main program (default)<br>
+<br>
+#define <b>PDIP_FLAG_RECV_ON_THE_FLOW</b> 0x02&nbsp;// If set, data are returned to the user as<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// they are received even if the regular expression<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// is not found (returned code is <b>PDIP_RECV_DATA</b>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Otherwise, the data is returned when<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// the regular expression is found (default)<br><br>
+&nbsp;&nbsp;unsigned char *cpu;&nbsp;// Array of bits describing the CPU affinity of the controlled process<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Allocated/freed with pdip_cpu_alloc()/pdip_cpu_free()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// cf. pdip_cpu(3)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//By default, the affinity is inherited from the main program<br><br>
+&nbsp;&nbsp;size_t buf_resize_increment;&nbsp;// Amount of space in bytes to add to the reception<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// buffer each time additional space is needed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Default is 1 KB<br>
+
+       } pdip_cfg_t;<br>
+</font>
+<br>
+If this parameter is <b>NULL</b>, the default values are used. If it is not <b>NULL</b>, it is advised to initialize it with a call to <a href="#pdip_cfg_init">pdip_cfg_init</a>()
+before setting its fields. The function returns a <b>PDIP</b> object of type <b>pdip_t</b>. This object is passed as parameter to most of the following services.<br><br>
+
+
+<a name="pdip_delete"></a><B>pdip_delete</B>() is the counterpart of <a href="#pdip_new">pdip_new</a>() as it deallocates the ctx <b>PDIP</b> object allocated by a preceding call to <a href="#pdip_new">pdip_new</a>(). If not <b>NULL</b>, <b>status</b> is updated with the termination status of the controlled process.<br><br>
+
+<a name="pdip_exec"></a><B>pdip_exec</B>() executes a program which will be controlled by the ctx <b>PDIP</b> object.  <b>ac</b> and <b>av</b> respectively describe the number of parameters and the parameters of the program to execute. They behave the same as the famous parameters passed to the <b>main</b>() function of the C language programs. In other words, they describe the program name to run along with its parameters.<br><br>
+
+<a name="pdip_fd"></a><B>pdip_fd</B>() returns the file descriptor of the ctx <b>PDIP</b> object (that is to say the file descriptor of the internal pseudo-terminal interfaced with the controlled program). This is useful in event driven applications where it is needed to be warned when data are available from the controlled program.<br><br>
+
+<a name="pdip_set_debug_level"></a><B>pdip_set_debug_level</B>() sets the debug level of the <B>ctx PDIP</B> object to the value of level.  The higher the value of level, the more debug messages will be displayed. The debug level and the output stream for the debug messages can also be configured at object creation time through the parameter passed to <a href="#pdip_new">pdip_new</a>(). If <B>ctx</B> is <B>NULL</B>, the service sets the global debug level of the service. That is to say, this controls the debug messages not linked to <B>PDIP</B> objects. A debug level equal to 0 deactivates the display of debug messages.<br><br>
+
+<a name="pdip_send"></a><B>pdip_send</B>() sends a string formatted with <b>format</b> to the process controlled by the <b>ctx PDIP</b> object. The behaviour of the format is compliant with <b>printf</b>(3). The size of the internal buffer to format the string is 4096 bytes. Over this limit, the function returns an error.<br><br>
+
+<a name="pdip_recv"></a><B>pdip_recv</B>() receives data from the process controlled by the <b>ctx PDIP</b> object. The user may pass a regular expression (regular_expr) compliant with <b>regex</b>(7) and/or a <b>timeout</b>. The data reception stops once either the timeout is elapsed or the regular expression is found. If neither the regular expression is found (or <b>regular_expr</b> is <b>NULL</b>) nor the timeout is set (i.e. <b>timeout</b> is <b>NULL</b>), the function waits indefinitely unless the  controlled  process  dies. The function is passed three additional parameters <b>display</b>, <b>display_sz</b> and <b>data_sz</b> which respectively contain the address of a dynamic memory buffer to store the data in, the physical size of the buffer and the number of bytes that the service stored into it. The data is <b>NUL</b> terminated by the service. <b>data_sz</b> does not count this last character (this is equivallent to the result of a call to <b>strlen</b>(3) on the buffer). If the display address of the buffer is <b>NULL</b> or the <b>display_sz</b> physical size of the buffer is not sufficient to contain the received data, the buffer is allocated or reallocated (in the latter case, the former buffer is freed by the service). Anyway, <b>display</b> and <b>display_sz</b> are respectively updated with the new address and the new size of the buffer. If the user puts a non <b>NULL</b> address in display parameter, <b>IT IS  VERY  IMPORTANT TO PASS THE BEGINNING ADDRESS OF A DYNAMIC MEMORY BUFFER</b> as the service may reallocate or free it through calls to <b>realloc</b>(3) or <b>free</b>(3).<br>
+The timeout is a structure defined in <b>&lt;sys/time.h&gt;</b> as:<br><br>
+
+struct timeval<br>
+{<br>
+  &nbsp;&nbsp;long    tv_sec;  &nbsp;&nbsp;&nbsp;&nbsp;// Seconds<br>
+  &nbsp;&nbsp;long    tv_usec; &nbsp;&nbsp;// Microseconds<br>
+};
+<br><br>
+
+<a name="pdip_sig"></a><B>pdip_sig</B>() sends the <b>sig</b> Linux signal to the process controlled by the <b>ctx PDIP</b> object. The list of available signals is defined in <b>&lt;signal.h&gt;</b>.<br><br>
+
+<a name="pdip_flush"></a><B>pdip_flush</B>() flushes any outstanding data from the <b>ctx PDIP</b> object. In other words, it concerns any data coming from the controlled process which have not been received yet by the application through a call to <a href="#pdip_recv">pdip_recv</a>() service. The function behaves the same as <a href="#pdip_recv">pdip_recv</a>() to update its <b>display</b>, <b>display_sz</b> and <b>data_sz</b> parameters.<br><br>
+
+<a name="pdip_status"></a><B>pdip_status</B>() returns the exit status in <b>status</b> (if not <b>NULL</b>) of the dead controlled process attached to the <b>ctx PDIP</b> object. The value of <b>status</b> can be inspected with macros as explained in <b>wait</b>(2). If the third parameter blocking is set to non 0, the service waits until the controlled process terminates. If set to 0, the service returns immediately reporting an error (<b>errno</b> is set to <b>EAGAIN</b>) if the controlled process is not terminated or 0 if the process is terminated.<br><br>
+
+<a name="pdip_lib_initialize"></a><B>pdip_lib_initialize</B>() is to be called in child processes using the <b>PDIP</b> API. By default, <b>PDIP</b> API is deactivated upon <b>fork</b>(2).
+
+<a name="Return value"></a><h3>Return value</h3>
+<a href="#pdip_new">pdip_new</a>() returns a <b>PDIP</b> object of type <b>pdip_t</b> if there are no error or (<b>pdip_t</b>)0 upon error (<b>errno</b> is set).<br><br>
+
+<a href="#pdip_exec">pdip_exec</a>() returns the pid of the controlled process or -1 upon error (<b>errno</b> is set).<br><br>
+
+<a href="#pdip_fd">pdip_fd</a>() returns the file descriptor of the pseudo-terminal linked with the controlled process or -1 upon error (<b>errno</b> is set).<br><br>
+
+<a href="#pdip_cfg_init">pdip_cfg_init</a>(), <a href="#pdip_configure">pdip_configure</a>(), <a href="#pdip_delete">pdip_delete</a>(), <a href="#pdip_set_debug_level">pdip_set_debug_level</a>(), <a href="#pdip_flush">pdip_flush</a>(), <a href="#pdip_sig">pdip_sig</a>(), <a href="#pdip_status">pdip_status</a>() and <a href="#pdip_lib_initialize">pdip_lib_initialize</a>() return 0 when there are no error or -1 upon error (<b>errno</b> is set).<br><br>
+
+<a href="#pdip_send">pdip_send</a>() returns the amount of sent characters or -1 upon error (<b>errno</b> is set).<br><br>
+
+<a href="#pdip_recv">pdip_recv</a>() returns:<br>
+<ul>
+       <li><b>PDIP_RECV_FOUND</b></li>
+              The regular expression is found. There are data in the returned buffer (i.e. <b>data_sz</b> > 0 unless the regular expression matched the beginning of the first line of the incoming data).
+
+       <li><b>PDIP_RECV_TIMEOUT</b></li>
+              The timeout elapsed.
+
+       <li><b>PDIP_RECV_DATA</b></li>
+              No regular expression was passed and data arrived (with or without timeout). Received data are in the returned buffer (i.e. <b>data_sz</b> > 0). This return code is also possible with a regular expression when <b>PDIP_FLAG_RECV_ON_THE_FLOW</b> is set.
+
+       <li><b>PDIP_RECV_ERROR</b></li>
+              An error occured (<b>errno</b> is set). However, there may be received data in the returned buffer (i.e. If <b>data_sz</b> > 0).
+</ul>
+
+<a name="Errors"></a><h3>Errors</h3>
+The functions may set <b>errno</b> with the following values:<br>
+<ul>
+       <li><b>EINVAL</b></li> Invalid parameter
+
+       <li><b>ECHILD</b></li> Program execution error or terminated prematurely
+
+      <li><b>EAGAIN</b></li> Status not available (process not dead)
+
+       <li><b>ENOENT</b></li> Object not found
+
+       <li><b>ESRCH</b></li>  Process not running
+
+       <li><b>EPERM</b></li> Operation not permitted as another process is already under control
+
+       <li><b>ENOSPC</b></li> Argument too big for internal buffer
+</ul>
+<a name="Mutual exclusion"></a><h3>Mutual exclusion</h3>
+By default, the service supposes that each <b>PDIP</b> object is managed at most by one thread. If an application shares a <b>PDIP</b> object between multiple threads, it is responsible to manage the mutual exclusion on its side.
+
+<a name="Examples api"></a><h3>Examples</h3>
+
+<p>
+In the <a href="#Related_links">related links</a> paragraph, there are references to <a href="#isys_rsys"><b>ISYS</b> and <b>RSYS</b></a> packages which are applications using <b>PDIP</b> library to propose alternate versions of <b>system</b>(3) of the C library.
+</p>
+
+The following program controls a <b>bash</b> shell. Before running the shell, the program modifies the <b>PS1</b> environment variable to define the prompt displayed by the shell otherwise the prompt would be inherited by the current shell which may be anything defined by the operator. Then, it synchronizes on the display of the first prompt, executes the <b>ls -la /</b> command and synchronizes on the prompt appearing right after the command execution. Then it executes the <b>exit</b> command to stop the shell.<br><br>
+
+<font face = "courier new">
+
+#include &lt;stdio.h&gt;<br>
+#include &lt;stdlib.h&gt;<br>
+#include &lt;errno.h&gt;<br>
+#include &lt;string.h&gt;<br>
+#include "pdip.h"<br><br><br><br>
+
+int main(int ac, char *av[])<br>
+{<br>
+pdip_t      pdip;<br>
+char       *bash_av[4];<br>
+int         rc;<br>
+char       *display;<br>
+size_t      display_sz;<br>
+size_t      data_sz;<br>
+pdip_cfg_t  cfg;<br>
+int         status;<br><br>
+
+&nbsp;&nbsp;(void)ac;<br>
+&nbsp;&nbsp;(void)av;<br><br>
+
+&nbsp;&nbsp;// Let the service manage the SIGCHLD signal as we don't fork/exec any<br>
+         &nbsp;&nbsp;// other program<br>
+         &nbsp;&nbsp;rc = <a href="#pdip_configure">pdip_configure</a>(1, 0);<br>
+         &nbsp;&nbsp;if (rc != 0)<br>
+         &nbsp;&nbsp;{<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, "pdip_configure(): '%m' (%d)\n", errno);<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;return 1;<br>
+         &nbsp;&nbsp;}<br><br>
+
+         &nbsp;&nbsp;// Create a PDIP object<br>
+         &nbsp;&nbsp;<a href="#pdip_cfg_init">pdip_cfg_init</a>(&cfg);<br>
+         &nbsp;&nbsp;// The bash prompt is displayed on stderr. So, to synchronize on it, we must<br>
+         &nbsp;&nbsp;// redirect stderr to the PTY between PDIP and bash<br>
+         &nbsp;&nbsp;cfg.flags |= PDIP_FLAG_ERR_REDIRECT;<br>
+         &nbsp;&nbsp;cfg.debug_level = 0;<br>
+         &nbsp;&nbsp;pdip = <a href="#pdip_new">pdip_new</a>(&cfg);<br>
+         &nbsp;&nbsp;if (!pdip)<br>
+         &nbsp;&nbsp;{<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, "pdip_new(): '%m' (%d)\n", errno);<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;return 1;<br>
+         &nbsp;&nbsp;}<br><br>
+
+         &nbsp;&nbsp;// Export the prompt of the BASH shell<br>
+         &nbsp;&nbsp;rc = setenv("PS1", "PROMPT> ", 1);<br>
+         &nbsp;&nbsp;if (rc != 0)<br>
+         &nbsp;&nbsp;{<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, "setenv(PS1): '%m' (%d)\n", errno);<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;return 1;<br>
+         &nbsp;&nbsp;}<br><br>
+
+         &nbsp;&nbsp;// Attach a bash shell to the PDIP object<br>
+         &nbsp;&nbsp;bash_av[0] = "/bin/bash";<br>
+         &nbsp;&nbsp;bash_av[1] = "--noprofile";<br>
+         &nbsp;&nbsp;bash_av[2] = "--norc";<br>
+         &nbsp;&nbsp;bash_av[3] = (char *)0;<br>
+         &nbsp;&nbsp;rc = <a href="#pdip_exec">pdip_exec</a>(pdip, 3, bash_av);<br>
+         &nbsp;&nbsp;if (rc != 0)<br>
+         &nbsp;&nbsp;{<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, "pdip_exec(bash): '%m' (%d)\n", errno);<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;return 1;<br>
+         &nbsp;&nbsp;}<br><br>
+
+         &nbsp;&nbsp;// Synchronize on the first displayed prompt<br>
+         &nbsp;&nbsp;display = (char *)0;<br>
+         &nbsp;&nbsp;display_sz = 0;<br>
+         &nbsp;&nbsp;data_sz = 0;<br>
+         &nbsp;&nbsp;rc = <a href="#pdip_recv">pdip_recv</a>(pdip, "^PROMPT> ", &display, &display_sz, &data_sz, (struct timeval*)0);<br>
+         &nbsp;&nbsp;if (rc != PDIP_RECV_FOUND)<br>
+         &nbsp;&nbsp;{<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, "pdip_recv(): Unexpected return code %d\n", rc);<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;return 1;<br>
+         &nbsp;&nbsp;}<br><br>
+
+         &nbsp;&nbsp;// Display the result<br>
+         &nbsp;&nbsp;printf("%s", display);<br><br>
+
+         &nbsp;&nbsp;// Execute the "ls -la /" command<br>
+         &nbsp;&nbsp;rc = <a href="#pdip_send">pdip_send</a>(pdip, "ls -la /\n");<br>
+         &nbsp;&nbsp;if (rc < 0)<br>
+         &nbsp;&nbsp;{<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, "pdip_send(ls -la /): '%m' (%d)\n", errno);<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;return 1;<br>
+         &nbsp;&nbsp;}<br><br>
+
+         &nbsp;&nbsp;// Synchronize on the prompt displayed right after the command execution<br>
+         &nbsp;&nbsp;// We pass the same buffer that will be eventually reallocated<br>
+         &nbsp;&nbsp;rc = <a href="#pdip_recv">pdip_recv</a>(pdip, "^PROMPT> ", &display, &display_sz, &data_sz, (struct timeval*)0);<br>
+         &nbsp;&nbsp;if (rc != PDIP_RECV_FOUND)<br>
+         &nbsp;&nbsp;{<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, "pdip_recv(): Unexpected return code %d\n", rc);<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;return 1;<br>
+         &nbsp;&nbsp;}<br><br>
+
+         &nbsp;&nbsp;// Display the result<br>
+         &nbsp;&nbsp;printf("%s", display);<br><br>
+
+         &nbsp;&nbsp;// Execute "exit" to go out of the shell<br>
+         &nbsp;&nbsp;rc = <a href="#pdip_send">pdip_send</a>(pdip, "exit\n");<br>
+         &nbsp;&nbsp;if (rc < 0)<br>
+         &nbsp;&nbsp;{<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, "pdip_send(exit): '%m' (%d)\n", errno);<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;return 1;<br>
+        &nbsp;&nbsp;}<br><br>
+
+&nbsp;&nbsp;// Wait for the end of "bash"<br>
+&nbsp;&nbsp;rc = <a href="#pdip_status">pdip_status</a>(pdip, &status, 1);<br>
+&nbsp;&nbsp;if (0 != rc)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, "pdip_status(): '%m' (%d)0, errno);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return 1;<br>
+&nbsp;&nbsp;}<br><br>
+
+&nbsp;&nbsp;printf("bash ended with status 0x%x0, status);<br><br>
+
+         &nbsp;&nbsp;// Delete the PDIP object<br>
+         &nbsp;&nbsp;rc = <a href="#pdip_delete">pdip_delete</a>(pdip, 0);<br>
+         &nbsp;&nbsp;if (rc != 0)<br>
+         &nbsp;&nbsp;{<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, "pdip_delete(): '%m' (%d)\n", errno);<br>
+           &nbsp;&nbsp;&nbsp;&nbsp;return 1;<br>
+         &nbsp;&nbsp;}<br><br>
+
+         &nbsp;&nbsp;return 0;<br><br>
+
+       } // main<br><br>
+
+</font>
+
+The program execution displays:<br><br>
+<font face = "courier new">
+$ ./man_exe_1<br>
+       PROMPT> ls -la /<br>
+       total 108<br>
+       drwxr-xr-x  24 root root  4096 oct.  22 21:28 .<br>
+       drwxr-xr-x  24 root root  4096 oct.  22 21:28 ..<br>
+       drwxr-xr-x   2 root root  4096 juil.  6 17:22 bin<br>
+       drwxr-xr-x   4 root root  4096 oct.  22 21:42 boot<br>
+       drwxrwxr-x   2 root root  4096 janv.  4  2017 cdrom<br>
+       [...]<br>
+       lrwxrwxrwx   1 root root    29 oct.  22 21:28 vmlinuz -> boot/vmlinuz-4.8.0-59-generic<br>
+       lrwxrwxrwx   1 root root    29 juil.  6 17:24 vmlinuz.old -> boot/vmlinuz-4.8.0-58-generic<br>
+       PROMPT> bash ended with status 0x0<br>
+
+</font>
+<br>
+The following program is passed a mathematic operation as argument. It uses <b>bc</b> tool to compute it. Some precautions are required for the synchronization as <b>bc</b> does not display any prompt. Hence, the program uses "end of line" pattern matching.<br><br>
+
+<font face = "courier new">
+
+#include &lt;stdio.h&gt;<br>
+       #include &lt;stdlib.h&gt;<br>
+       #include &lt;errno.h&gt;<br>
+       #include &lt;string.h&gt;<br>
+       #include &lt;libgen.h&gt;<br>
+       #include "pdip.h"<br><br>
+
+       int main(int ac, char *av[])<br>
+       {<br>
+       pdip_t      pdip;<br>
+       char       *bash_av[3];<br>
+       int         rc;<br>
+       char       *display;<br>
+       size_t      display_sz;<br>
+       size_t      data_sz;<br>
+       pdip_cfg_t  cfg;<br>
+       char       *op;<br>
+       int         i;<br>
+       int         status;<br><br>
+
+&nbsp;&nbsp;         if (ac != 2)<br>
+&nbsp;&nbsp;         {<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;          fprintf(stderr, "Usage: %s operation\n", basename(av[0]));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           return 1;<br>
+&nbsp;&nbsp;         }<br><br>
+
+&nbsp;&nbsp;         // Let the service manage the SIGCHLD signal as we don't fork/exec any<br>
+&nbsp;&nbsp;         // other program<br>
+&nbsp;&nbsp;         rc = <a href="#pdip_configure">pdip_configure</a>(1, 0);<br>
+&nbsp;&nbsp;         if (rc != 0)<br>
+&nbsp;&nbsp;         {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           fprintf(stderr, "pdip_configure(): '%m' (%d)\n", errno);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           return 1;<br>
+&nbsp;&nbsp;         }<br><br>
+
+&nbsp;&nbsp;         op = av[1];<br><br>
+
+&nbsp;&nbsp;        // Create a PDIP object<br>
+&nbsp;&nbsp;         <a href="#pdip_cfg_init">pdip_cfg_init</a>(&cfg);<br>
+&nbsp;&nbsp;         cfg.debug_level = 0;<br>
+&nbsp;&nbsp;         pdip = <a href="#pdip_new">pdip_new</a>(&cfg);<br>
+&nbsp;&nbsp;         if (!pdip)<br>
+&nbsp;&nbsp;         {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           fprintf(stderr, "pdip_new(): '%m' (%d)\n", errno);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           return 1;<br>
+&nbsp;&nbsp;         }<br><br>
+
+&nbsp;&nbsp;         // Attach the "bc" command to the PDIP object<br>
+&nbsp;&nbsp;         // Option "-q" launches "bc" in quiet mode: it does not display<br>
+&nbsp;&nbsp;         // the welcome banner<br>
+&nbsp;&nbsp;         bash_av[0] = "bc";<br>
+&nbsp;&nbsp;         bash_av[1] = "-q";<br>
+&nbsp;&nbsp;         bash_av[2] = (char *)0;<br>
+&nbsp;&nbsp;         rc = <a href="#pdip_exec">pdip_exec</a>(pdip, 2, bash_av);<br>
+&nbsp;&nbsp;         if (rc != 0)<br>
+&nbsp;&nbsp;         {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           fprintf(stderr, "pdip_exec(bc -q): '%m' (%d)\n", errno);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           return 1;<br>
+&nbsp;&nbsp;         }<br><br>
+
+&nbsp;&nbsp;         // Execute the operation<br>
+&nbsp;&nbsp;         rc = <a href="#pdip_send">pdip_send</a>(pdip, "%s\n", op);<br>
+&nbsp;&nbsp;         if (rc < 0)<br>
+&nbsp;&nbsp;         {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           fprintf(stderr, "pdip_send(op): '%m' (%d)\n", errno);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           return 1;<br>
+&nbsp;&nbsp;         }<br><br>
+
+&nbsp;&nbsp;         // Initialize the display buffer<br>
+&nbsp;&nbsp;         display = (char *)0;<br>
+&nbsp;&nbsp;         display_sz = 0;<br>
+&nbsp;&nbsp;         data_sz = 0;<br><br>
+
+&nbsp;&nbsp;        // For some reasons, "bc" echoes the operation two times ?!?<br>
+&nbsp;&nbsp;         // ==> Skip them<br>
+&nbsp;&nbsp;         for (i = 0; i < 2; i ++)<br>
+&nbsp;&nbsp;         {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           // Synchronize on the echo<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           // We pass the same buffer that will be eventually reallocated<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           rc = <a href="#pdip_recv">pdip_recv</a>(pdip, "^.+$", &display, &display_sz, &data_sz, (struct timeval*)0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           if (rc != PDIP_RECV_FOUND)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;             fprintf(stderr, "pdip_recv(): Unexpected return code %d\n", rc);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;             return 1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           }<br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;    // Print the operation on the screen (one time :-)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;    if (0 == i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;    {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;      printf("%s=", display);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;    }<br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;           // Skip the end of line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           rc = <a href="#pdip_recv">pdip_recv</a>(pdip, "$", &display, &display_sz, &data_sz, (struct timeval*)0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           if (rc != PDIP_RECV_FOUND)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;             fprintf(stderr, "pdip_recv($): Unexpected return code %d\n", rc);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;             return 1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           }<br>
+&nbsp;&nbsp;         } // End for<br><br>
+
+&nbsp;&nbsp;         // Synchronize on the result of the operation<br>
+&nbsp;&nbsp;         rc = <a href="#pdip_recv">pdip_recv</a>(pdip, "^.+$", &display, &display_sz, &data_sz, (struct timeval*)0);<br>
+&nbsp;&nbsp;         if (rc != PDIP_RECV_FOUND)<br>
+&nbsp;&nbsp;         {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           fprintf(stderr, "pdip_recv(): Unexpected return code %d\n", rc);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           return 1;<br>
+&nbsp;&nbsp;         }<br><br>
+
+&nbsp;&nbsp;         // Display the result of the operation with '0 as the match<br>
+&nbsp;&nbsp;         // does not embed the end of line<br>
+&nbsp;&nbsp;         printf("%s0, display);<br>
+&nbsp;&nbsp;         fflush(stdout);<br><br>
+
+&nbsp;&nbsp;        // Skip the end of line<br>
+&nbsp;&nbsp;         rc = <a href="#pdip_recv">pdip_recv</a>(pdip, "$", &display, &display_sz, &data_sz, (struct timeval*)0);<br>
+&nbsp;&nbsp;         if (rc != PDIP_RECV_FOUND)<br>
+&nbsp;&nbsp;         {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           fprintf(stderr, "pdip_recv($): Unexpected return code %d\n", rc);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           return 1;<br>
+&nbsp;&nbsp;         }<br><br>
+
+&nbsp;&nbsp;         // Execute "quit" to go out<br>
+&nbsp;&nbsp;         rc = <a href="#pdip_send">pdip_send</a>(pdip, "quit\n");<br>
+&nbsp;&nbsp;         if (rc < 0)<br>
+&nbsp;&nbsp;         {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           fprintf(stderr, "pdip_send(quit): '%m' (%d)\n", errno);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           return 1;<br>
+&nbsp;&nbsp;         }<br><br>
+
+&nbsp;&nbsp;         // Synchronize on the echo of "quit"<br>
+&nbsp;&nbsp;         // We pass the same buffer that will be eventually reallocated<br>
+&nbsp;&nbsp;         rc = <a href="#pdip_recv">pdip_recv</a>(pdip, "^quit$", &display, &display_sz, &data_sz, (struct timeval*)0);<br>
+&nbsp;&nbsp;         if (rc != PDIP_RECV_FOUND)<br>
+&nbsp;&nbsp;         {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           fprintf(stderr, "pdip_recv(): Unexpected return code %d\n", rc);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           return 1;<br>
+&nbsp;&nbsp;         }<br><br>
+
+&nbsp;&nbsp;         // Wait for the end of "bc"<br>
+&nbsp;&nbsp;         rc = <a href="#pdip_status">pdip_status</a>(pdip, &status, 1);<br>
+&nbsp;&nbsp;         if (0 != rc)<br>
+&nbsp;&nbsp;         {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           fprintf(stderr, "pdip_status(): '%m' (%d)0, errno);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           return 1;<br>
+&nbsp;&nbsp;         }<br><br>
+
+&nbsp;&nbsp;        printf("bc ended with status 0x%x0, status);<br><br>
+
+&nbsp;&nbsp;         // Delete the PDIP object<br>
+&nbsp;&nbsp;         rc = <a href="#pdip_delete">pdip_delete</a>(pdip, 0);<br>
+&nbsp;&nbsp;         if (rc != 0)<br>
+&nbsp;&nbsp;         {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;      fprintf(stderr, "pdip_delete(): '%m' (%d)\n", errno);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;           return 1;<br>
+&nbsp;&nbsp;         }<br><br>
+
+&nbsp;&nbsp;         return 0;<br><br>
+
+       } // main<br>
+</font>
+<br>
+The program execution for "67*18" displays:<br><br>
+
+
+<font face = "courier new">
+$ ./man_exe_2 67*18<br>
+67*18=1206<br>
+bc ended with status 0x0
+</font>
+<br><br>
+
+<hr style="width: 100%; height: 2px; font-family: monospace;">
+<h2><a style="font-family: monospace;" name="Download"></a>Download</h2>
+<br>
+PDIP can be downloaded from this <a href="https://sourceforge.net/projects/pdip">page</a>
+in one of the following three ways:<br>
+<ul>
+  <li>Source package</li>
+  <li>DEB binary package</li>
+  <li>RPM binary package</li>
+</ul>
+
+<hr style="width: 100%; height: 2px;">
+<h2><a name="Installation"></a>Installation
+&amp; build</h2>
+PDIP&nbsp;can be installed in three ways:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1. <a href="#1_Installation_from_the_sources">Installation
+from the sources</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2. <a href="#2_Installation_of_the_binaries_from_the">Installation
+from the DEB binary package</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+3. <a href="#3_Installation_of_the_binaries_from_the">Installation
+from the RPM binary package</a><br>
+<br>
+From the sources, you can generate a DEB or binary package:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4. <a href="#4_Generation_of_a_DEB_binary_package">Generation
+of a DEB binary package</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+5. <a href="#5_Generation_of_a_RPM_binary_package">Generation
+of a RPM binary package</a><br>
+<br>
+You can generate a zipped tar file of the sources:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+6. <a href="#6_Generation_of_a_zipped_tar_file">Generation
+of a zipped tar file</a><br>
+<br>
+<br>
+<h3><a name="1_Installation_from_the_sources"></a>1.
+Installation from the sources</h3>
+The installation from the sources supposes that <a href="http://rachid.koucha.free.fr/tech_corner/cmake_manual.html">cmake</a>
+is installed on your Linux system.<br>
+Unpack the tar compressed file pdip-xxx.tgz into a directory. This will
+create a sub-directory called pdip-xxx with the source files of the
+program:<br>
+<br>
+<span style="font-family: monospace;">$ tar xvfz
+pdip-xxx.tgz</span><br style="font-family: monospace;">
+<br>
+Go into the newly created directory:<br>
+<br>
+<span style="font-family: monospace;">$ cd pdip-xxx</span><br>
+<br>
+Make sure the file 'pdip_install.sh' has the execute permission:<br>
+<br>
+<span style="font-family: monospace;">$ chmod +x
+pdip_install.sh</span><br>
+<br>
+Launch the script 'pdip_install.sh' to get the help:<br>
+<br>
+<span style="font-family: monospace;">$ ./pdip_install.sh
+-h</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">Usage:
+pdip_install.sh [-c] [-d install_root_dir] [-P DEB | RPM] [-B] [-I] [-A] [-h]</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-c
+:
+Cleanup built objects</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-d
+:
+Installation
+directory (default: /usr/local)</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-P
+:
+Generate
+a DEB or RPM package</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-B
+:
+Build
+the software</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-I
+:
+Install
+the software</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-A
+:
+Generate
+an archive of the software (sources)</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-h
+:
+this
+help</span><br style="font-family: monospace;">
+<br>
+Under root identity, launch the installation by passing '-I' and
+optionnaly '-d' to specify an installation directory different than
+'/usr/local':<br>
+<br>
+For example, for an installation in '/usr/local', type:<br>
+<br>
+<span style="font-family: monospace;">$ sudo
+./pdip_install.sh -I</span><br style="font-family: monospace;">
+<br>
+For an installation in '/usr', type;<br>
+<br>
+<span style="font-family: monospace;">$ sudo
+./pdip_install.sh -I -d /usr</span><br>
+<br>
+If your PATH variable is correctly set, PDIP help can be displayed:<br>
+<br>
+$ pdip --help<br>
+[...]<br>
+<br>
+If your MANPATH variable is correctly set, PDIP's online manual can be
+displayed:<br>
+<br>
+<span style="font-family: monospace;">$ man pdip<br>
+[...]<br style="font-family: monospace;">
+</span><br>
+<h3><a name="2_Installation_of_the_binaries_from_the"></a>2.
+Installation of the binaries from the DEB package</h3>
+The files are installed in via the command:<br>
+<br>
+<span style="font-family: monospace;">$ sudo dpkg -i
+pdip-xxx.deb</span><br style="font-family: monospace;">
+<br>
+<h3><a name="3_Installation_of_the_binaries_from_the"></a>3.
+Installation of the binaries from the RPM package</h3>
+The files are installed via the command:<br>
+<br>
+<span style="font-family: monospace;">$ sudo rpm -i
+pdip-xxx.rpm</span><br>
+<br>
+<h3><a name="4_Generation_of_a_DEB_binary_package"></a>4.
+Generation of a DEB binary package</h3>
+The installation from the sources supposes that <a href="http://rachid.koucha.free.fr/tech_corner/cmake_manual.html">cmake</a>
+is installed on your Linux system<br>
+Unpack the tar compressed file pdip-xxx.tgz into a directory. This will
+create a sub-directory called 'pdip-xxx' with the source files of the
+program:<br>
+<br>
+<span style="font-family: monospace;">$ tar xvfz
+pdip-xxx.tgz</span><br>
+<br>
+Go into the newly created directory:<br>
+<br>
+<span style="font-family: monospace;">$ cd pdip-xxx</span><br>
+<br>
+Make sure the file 'pdip_install.sh' has the execute permission:<br>
+<br>
+<span style="font-family: monospace;">$ chmod +x
+pdip_install.sh</span><br>
+<br>
+Launch the script 'pdip_install.sh' to get the help:<br>
+<br>
+<span style="font-family: monospace;">$ ./pdip_install.sh
+-h</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">Usage:
+pdip_install.sh [-c] [-d install_root_dir] [-P DEB | RPM] [-B] [-I] [-A] [-h]</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-c
+:
+Cleanup built objects</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-d
+:
+Installation
+directory (default: /usr/local)</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-P
+:
+Generate
+a DEB or RPM package</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-B
+:
+Build
+the software</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-I
+:
+Install
+the software</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-A
+:
+Generate
+an archive of the software (sources)</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-h
+:
+this
+help</span><br style="font-family: monospace;">
+<br>
+Under root identity, launch the installation by passing '-P DEB' and
+optionnaly '-d' to specify an installation directory different than
+'/usr/local':<br>
+<br>
+For example, for a package which will be installed in '/usr/local',
+type:<br>
+<br>
+<span style="font-family: monospace;">$ sudo
+./pdip_install.sh -P DEB</span><br>
+<br>
+For an installation in '/usr', type;<br>
+<br>
+<span style="font-family: monospace;">$ sudo
+./pdip_install.sh -P DEB -d /usr</span><br>
+<br>
+<h3><a name="5_Generation_of_a_RPM_binary_package"></a>5.
+Generation of a RPM binary package</h3>
+The installation from the sources supposes that <a href="http://rachid.koucha.free.fr/tech_corner/cmake_manual.html">cmake</a>
+is installed on your Linux system.<br>
+Unpack the tar compressed file pdip-xxx.tgz into a directory. This will
+create a sub-directory called 'pdip-xxx' with the source files of the
+program:<br>
+<br>
+<span style="font-family: monospace;">$ tar xvfz
+pdip-xxx.tgz</span><br>
+<br>
+Go into the newly created directory:<br>
+<br>
+<span style="font-family: monospace;">$ cd pdip-xxx</span><br>
+<br>
+Make sure the file 'pdip_install.sh' has the execute permission:<br>
+<br>
+<span style="font-family: monospace;">$ chmod +x
+pdip_install.sh</span><br>
+<br>
+Launch the script 'pdip_install.sh' to get the help:<br>
+<br>
+<span style="font-family: monospace;">$ ./pdip_install.sh
+-h</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">Usage:
+pdip_install.sh [-c] [-d install_root_dir] [-P DEB | RPM] [-B] [-I] [-A] [-h]</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-c
+:
+Cleanup built objects</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-d
+:
+Installation
+directory (default: /usr/local)</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-P
+:
+Generate
+a DEB or RPM package</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-B
+:
+Build
+the software</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-I
+:
+Install
+the software</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-A
+:
+Generate
+an archive of the software (sources)</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-h
+:
+this
+help</span><br>
+<br>
+Under root identity, launch the installation by passing '-P RPM' and
+optionnaly '-d' to specify an installation directory different than
+'/usr/local':<br>
+<br>
+For example, for a package which will be installed in '/usr/local',
+type:<br>
+<br>
+<span style="font-family: monospace;">$ sudo
+./pdip_install.sh -P RPM</span><br>
+<br>
+For an installation in '/usr', type;<br>
+<br>
+<span style="font-family: monospace;">$ sudo
+./pdip_install.sh -P RPM -d /usr</span><br>
+<br>
+<h3><a name="6_Generation_of_a_zipped_tar_file"></a>6.
+Generation of a zipped tar file</h3>
+The installation from the sources supposes that <a href="http://rachid.koucha.free.fr/tech_corner/cmake_manual.html">cmake</a>
+is installed on your Linux system.<br>
+Unpack the tar compressed file pdip-xxx.tgz into a directory. This will
+create a sub-directory called 'pdip-xxx' with the source files of the
+program:<br>
+<br>
+<span style="font-family: monospace;">$ tar xvfz
+pdip-xxx.tgz</span><br>
+<br>
+Go into the newly created directory:<br>
+<br>
+<span style="font-family: monospace;">$ cd pdip-xxx</span><br>
+<br>
+Make sure the file 'pdip_install.sh' has the execute permission:<br>
+<br>
+<span style="font-family: monospace;">$ chmod +x
+pdip_install.sh</span><br>
+<br>
+Launch the script 'pdip_install.sh' to get the help:<br>
+<br>
+<span style="font-family: monospace;">$ ./pdip_install.sh
+-h</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">Usage:
+pdip_install.sh [-c] [-d install_root_dir] [-P DEB | RPM] [-B] [-I] [-A] [-h]</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-c
+:
+Cleanup built objects</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-d
+:
+Installation
+directory (default: /usr/local)</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-P
+:
+Generate
+a DEB or RPM package</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-B
+:
+Build
+the software</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-I
+:
+Install
+the software</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-A
+:
+Generate
+an archive of the software (sources)</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-h
+:
+this
+help</span><br style="font-family: monospace;">
+<br>
+Under root identity, launch the installation by passing '-A':<br>
+<br>
+<span style="font-family: monospace;">$ sudo
+./pdip_install.sh -A</span><br style="font-family: monospace;">
+<br>
+<br>
+<hr style="width: 100%; height: 2px;">
+<h2><a name="About_the_author"></a>About the
+author</h2>
+The author is an engineer in computer sciences located in France. He is
+glad to graciously offer this simple utility under the GPL open source
+license. He can be contacted at "rachid dot koucha at gmail dot com" or
+you can have a look at his <a href="http://rachid.koucha.free.fr/">WEB
+home page</a>.<br>
+<br>
+<hr style="width: 100%; height: 2px;">
+<h2><a name="Related_links"></a>Related links</h2>
+<br>
+<ul>
+  <li>Programmed Dialogue with Interactive Programs - <a href="http://fr.wikipedia.org/wiki/Programmed_Dialogue_with_Interactive_Programs">Wikipedia</a>
+(in french)</li>
+  <li>Utilisation des pseudo-terminaux pour piloter les
+programmes interactifs - <a href="http://connect.ed-diamond.com/GNU-Linux-Magazine/GLMF-100/Utilisation-des-pseudo-terminaux-pour-piloter-les-programmes-interactifs"><img style="border: 0px solid ; width: 100px; height: 31px;" alt="glmf_logo" src="glmf_logo.gif"></a> (in
+french)</li>
+  <li><a href="http://rachid.koucha.free.fr/tech_corner/pty_pdip.html">Using
+pseudo-terminals
+to
+control
+interactive programs</a> (English version
+of the preceding)</li>
+  <li><a href="http://rachid.koucha.free.fr/tech_corner/cmake_manual.html">Whirlwind
+tour
+of
+cmake</a></li>
+<li><a name="isys_rsys"></a><a href="system_optimization.html">Some solutions to make system() API more efficient and less cumbersome (vfork(), isys and rsys API)</a></li>
+</ul>
+<table style="text-align: left; margin-left: auto; margin-right: auto;">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(153, 153, 153);">
+      <script type="text/javascript"><!--
+google_ad_client = "pub-9113501896220746";
+/* 728x90, date de création 29/03/08 */
+google_ad_slot = "7632855209";
+google_ad_width = 728;
+google_ad_height = 90;
+//--></script>
+      <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div style="text-align: right;"><small><small><big><a href="http://rachid.koucha.free.fr/index.html">Back to home page</a></big></small></small><br>
+<small><small><big> <a href="http://rachid.koucha.free.fr/freeware.html">Back to
+previous page</a></big></small></small></div>
+
+</body></html>

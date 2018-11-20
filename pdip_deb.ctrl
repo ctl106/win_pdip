@@ -1,0 +1,7 @@
+Package: pdip
+Version: 1.0
+Maintainer: Rachid Koucha <rachid dot koucha at gmail dot com>
+Description: PDIP (Programmed Dialogue with Interactive Programs)
+Architecture: all
+Priority: optional
+Homepage: http://pdip.sourceforge.net

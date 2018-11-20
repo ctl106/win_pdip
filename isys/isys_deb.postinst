@@ -1,0 +1,33 @@
+#!/bin/bash
+
+INSTALL_PREFIX=/usr/local
+
+FILE=FindIsys.cmake
+chmod 644  ${INSTALL_PREFIX}/lib/cmake/${FILE}
+chown root ${INSTALL_PREFIX}/lib/cmake/${FILE}
+chgrp root ${INSTALL_PREFIX}/lib/cmake/${FILE}
+
+FILE=isys.pc
+chmod 644  ${INSTALL_PREFIX}/lib/pkgconfig/${FILE}
+chown root ${INSTALL_PREFIX}/lib/pkgconfig/${FILE}
+chgrp root ${INSTALL_PREFIX}/lib/pkgconfig/${FILE}
+
+FILE=libisys.so
+chmod 444  ${INSTALL_PREFIX}/lib/${FILE}
+chown root ${INSTALL_PREFIX}/lib/${FILE}
+chgrp root ${INSTALL_PREFIX}/lib/${FILE}
+
+FILE=isys.h
+chmod 444  ${INSTALL_PREFIX}/include/${FILE}
+chown root ${INSTALL_PREFIX}/include/${FILE}
+chgrp root ${INSTALL_PREFIX}/include/${FILE}
+
+FILE=isys.3.gz
+chmod 444  ${INSTALL_PREFIX}/share/man/man3/${FILE}
+chown root ${INSTALL_PREFIX}/share/man/man3/${FILE}
+chgrp root ${INSTALL_PREFIX}/share/man/man3/${FILE}
+
+FILE=isystem.3.gz
+chmod 444  ${INSTALL_PREFIX}/share/man/man3/${FILE}
+chown root ${INSTALL_PREFIX}/share/man/man3/${FILE}
+chgrp root ${INSTALL_PREFIX}/share/man/man3/${FILE}

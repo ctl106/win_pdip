@@ -1,0 +1,272 @@
+.\" Format this file with the following command :
+.\" groff -man -Tascii  <file>
+.\"
+.TH PDIP_CPU 3  "FEVRIER 2018" "API" "API"
+.SH NOM
+pdip_cpu \- Manipulation CPU pour la librairie PDIP
+.SH SYNOPSIS
+.nf
+\fB#include "pdip.h"\fP
+.sp
+
+.PP
+.BI "int pdip_cpu_nb(void);"
+.BI "unsigned char *pdip_cpu_alloc(void);"
+.BI "int pdip_cpu_free(unsigned char *" cpu ");"
+.BI "int pdip_cpu_zero(unsigned char *" cpu ");"
+.BI "int pdip_cpu_all(unsigned char *" cpu ");"
+.BI "int pdip_cpu_set(unsigned char *" cpu ", unsigned int " n ");"
+.BI "int pdip_cpu_isset(unsigned char *" cpu ", unsigned int " n ");"
+.BI "int pdip_cpu_unset(unsigned char *" cpu ", unsigned int " n ");"
+
+.fi
+.SH DESCRIPTION
+
+Ces services sont destinés à manipuler les affinités CPU des objets
+.BR "PDIP".
+En d'autres termes, ils définissent la liste des CPUs sur lesquels les processus contrôlés par les objets
+.B PDIP
+vont tourner. Les CPUs sont décrits dans un tableau de caractères non signés (unsigned char) représentant une bitmap. Les CPUs numérotés de 0 à N sont respectivement associés aux bits numérotés de 0 à N dans la bitmap. Quand un bit est positionné, cela signifie que le CPU associé est susceptible d'être utilisé par le processus contrôlé par l'objet
+.BR "PDIP".
+
+.PP
+.B pdip_cpu_nb()
+retourne le nombre de CPUs actifs. Quand la librairie
+.B PDIP
+démarre, elle acquiert et stocke en interne le nombre de CPUs actifs. Ce service retourne donc simplement cette valeur.
+
+.PP
+.B pdip_cpu_alloc()
+alloue et retourne une bitmap correspondant au nombre de CPUs actifs. Cette bitmap sera utilisée par les services suivants.
+
+.PP
+.B pdip_cpu_free()
+désalloue une bitmap précédemment allouée par 
+.BR "pdip_cpu_alloc"().
+
+.PP
+.B pdip_cpu_zero()
+remet à zéro une bitmap.
+
+.PP
+.B pdip_cpu_all()
+met à 1 tous les bits d'une bitmap.
+
+.PP
+.B pdip_cpu_set()
+positionne le bit numéro
+.I n
+dans la bitmap
+.IR "cpu".
+
+
+.PP
+.B pdip_cpu_isset()
+testes si le bit numéro
+.I n
+est positionné dans la bitmap
+.IR "cpu".
+
+
+.PP
+.B pdip_cpu_unset()
+dépositionne le bit numéro
+.I n
+dans la bitmap
+.IR "cpu".
+
+
+.SH VALEUR DE RETOUR
+
+.PP
+.BR "pdip_cpu_nb()"
+retourne le nombre de CPUs actifs.
+
+.PP
+.BR "pdip_cpu_alloc()"
+retourne un tableau de caractères non signés décrivant la bitmap de CPUs ou 0 en cas d'erreur (\fBerrno\fP est positionné).
+
+.PP
+.BR "pdip_cpu_free()",
+.BR "pdip_cpu_zero()",
+.BR "pdip_cpu_all()",
+.BR "pdip_cpu_set()"
+et
+.BR "pdip_cpu_unset()"
+retournent 0 s'il n'y a pas d'erreur ou -1 en cas d'erreur (\fBerrno\fP est positionné).
+
+.PP
+.BR "pdip_cpu_isset()"
+retourne une valeur différente de zéro si le bit est positionné et 0 s'il ne l'est pas. Le service retourne -1 en cas d'erreur (\fBerrno\fP est positionné).
+
+.SH ERREURS
+Les fonctions peuvent positionner
+.B errno
+avec les valeurs suivantes:
+.TP
+.B EINVAL
+Paramètre invalide
+.TP
+.B ENOSPC
+Problème d'allocation mémoire
+
+.SH EXEMPLES
+
+Le programme suivant exécute la commande "ps -e -o pid,ppid,psr,comm" sur le premier et le dernier processeur. La ligne correspondant au processus "ps" est extraite pour afficher le numéro du processeur sur lequel il s'exécute.
+
+.nf
+
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <libgen.h>
+#include "pdip.h"
+
+
+int main(int ac, char *av[])
+{
+pdip_t      pdip;
+char       *new_av[5];
+int         rc;
+char       *display;
+size_t      display_sz;
+size_t      data_sz;
+pdip_cfg_t  cfg;
+int         status;
+char        reg_expr[256];
+int         pid_prog;
+char       *processor;
+
+ (void)ac;
+ (void)av;
+
+  // Let the service manage the SIGCHLD signal as we don't fork/exec any
+  // other program
+  rc = pdip_configure(1, 0);
+  if (rc != 0)
+  {
+    fprintf(stderr, "pdip_configure(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Create a PDIP object and make it run the program
+  // on the last CPU
+  pdip_cfg_init(&cfg);
+  cfg.debug_level = 0;
+  cfg.cpu = pdip_cpu_alloc();
+
+  // Choose first and last CPU for the program
+  pdip_cpu_set(cfg.cpu, 0);
+  pdip_cpu_set(cfg.cpu, pdip_cpu_nb() - 1);
+  pdip = pdip_new(&cfg);
+  if (!pdip)
+  {
+    fprintf(stderr, "pdip_new(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  //pdip_set_debug_level(pdip, 4);
+
+  // Attach the "ps " command to the PDIP object
+  new_av[0] = "ps";
+  new_av[1] = "-e";
+  new_av[2] = "-o";
+  new_av[3] = "pid,ppid,psr,comm";
+  new_av[4] = (char *)0;
+  pid_prog = pdip_exec(pdip, 4, new_av);
+  if (pid_prog < 0)
+  {
+    fprintf(stderr, "pdip_exec(ps): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Make the regular expression to catch "ps" process in the result
+  // of the command
+  snprintf(reg_expr, sizeof(reg_expr), "%d([ ])+%d([ ])+([0-9])+([ ])+ps", pid_prog, getpid());
+
+  // Initialize the display buffer
+  display = (char *)0;
+  display_sz = 0;
+  data_sz = 0;
+
+  // Receive data
+  rc = pdip_recv(pdip, reg_expr, &display, &display_sz, &data_sz, 0);
+  if (rc != PDIP_RECV_FOUND)
+  {
+    fprintf(stderr, "Regular expression '%s' not found\\n", reg_expr);
+    return 1;
+  }
+
+  // Get processor number in the output of 'ps' command
+  processor = display + data_sz; // End of buffer
+  while (' ' != *processor) // Skip command name
+  {
+    processor --;
+  }
+  while (' ' == *processor) // Skip spaces between command and processor number
+  {
+    processor --;
+  }
+  *(processor + 1) = '\0'; // NUL terminate the processor number string
+  while (' ' != *processor) // Go to the beginning of the processor number string
+  {
+    processor --;
+  }
+  processor ++;
+  printf("'ps' runs on processor#%s\\n", processor);
+
+  // Wait for the end of "ps"
+  rc = pdip_status(pdip, &status, 1);
+  if (0 != rc)
+  {
+    fprintf(stderr, "pdip_status(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Delete the PDIP object
+  rc = pdip_delete(pdip, 0);
+  if (rc != 0)
+  {
+    fprintf(stderr, "pdip_delete(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Delete the CPU bitmap
+  pdip_cpu_free(cfg.cpu);
+
+  return 0;
+
+} // main
+
+.fi
+
+L'exécution du programme précédent affiche ceci sur une machine avec 8 CPUs:
+
+.nf
+
+$ test/man_exe_3
+\'ps\' runs on processor#7
+
+.fi
+
+Et parfois il affiche:
+
+.nf
+
+$ test/man_exe_3 
+\'ps\' runs on processor#0
+
+.fi
+
+
+.BR "rsystemd"(8)
+est un autre exemple d'application de ce mécanisme d'affinité CPU pour créer des shells sur des ensembles configurables de CPUs.
+
+.SH AUTEUR
+Rachid Koucha
+
+.SH "VOIR AUSSI"
+.BR pdip (1),
+.BR pdip (3).

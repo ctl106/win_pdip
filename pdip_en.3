@@ -1,0 +1,821 @@
+.\" Format this file with the following command :
+.\" groff -man -Tascii  <file>
+.\"
+.TH PDIP 3  "APRIL 2018" "API" "API"
+.SH NAME
+pdip \- API of Programmed Dialogue with Interactive Programs
+.SH SYNOPSIS
+.nf
+\fB#include "pdip.h"\fP
+.sp
+
+.PP
+.BI "int pdip_configure(int " sig_hdl_internal ", int " debug_level ");"
+.PP
+.BI "int pdip_cfg_init(pdip_cfg_t *" cfg ");"
+.BI "pdip_t pdip_new(pdip_cfg_t *" cfg ");"
+.BI "int pdip_delete(pdip_t " ctx ", int *" status ");"
+.PP
+.BI "int pdip_exec(pdip_t " ctx ", int " ac ", char *" av[] ");"
+.BI "int pdip_fd(pdip_t " ctx ");"
+
+.PP
+.BI "int pdip_set_debug_level(pdip_t " ctx ", int " level ");"
+
+.PP
+.BI "int pdip_send(pdip_t " ctx ", const char *" format ", " ... ");"
+.BI "int pdip_recv(pdip_t *" ctx ", const char *" regular_expr ", char **" display ", size_t *" display_sz ", size_t *" data_sz ", struct timeval *" timeout ");"
+.BI "int pdip_sig(pdip_t " ctx ", int " sig ");"
+.BI "int pdip_flush(pdip_t " ctx ", char **" display ", size_t *" display_sz ", size_t *" data_sz ");"
+.BI "int pdip_status(pdip_t " ctx ", int *" status ", int " blocking ");"
+
+.PP
+.BI "int pdip_lib_initialize(void);"
+
+.fi
+.SH DESCRIPTION
+
+The
+.B PDIP
+API is a C language library named
+.B libpdip.so
+providing the ability to control terminal oriented interactive processes by simulating an operator. Each controlled process is associated to a
+.B PDIP
+object.
+
+.PP
+The transition diagram of a
+.B PDIP
+object as well as the services applicable to each state are depicted below:
+
+.nf
+                                          +-------+                 +-----------+
+                  +------+                |       |---pdip_send()-->|Interactive|
+                  |      |--pdip_exec()-->| ALIVE |<--pdip_recv()---|  process  |
+  ---pdip_new()-->| INIT |                |       |                 +-----------+
+                  |      |                +-------+
+                  +------+                   /   |  
+                      /                     /    |
+                     /                     /     |
+  <--pdip_delete()--+                     /   SIGCHLD
+                                         /       |
+  <------------------pdip_delete()------+        V
+                                             +------+
+                                             |      | pdip_flush()
+  <----------------------pdip_delete()-------| DEAD | pdip_status()
+                                             |      |
+                                             +------+
+
+
+.fi
+
+.PP
+.B pdip_configure()
+is supposed to be called prior any other service as it configures some internals of the library:
+.TP
+.I sig_hdl_internal
+If set to a value different than 0, the library manages the
+.B SIGCHLD
+signal of the dead child processes internally. If it is set to 0, the application is supposed
+to call:
+
+.BI "int pdip_signal_handler(int " sig ", siginfo_t *" info ");"
+
+to let the library manage the
+.B SIGCHLD
+signal concerning the child processes that it launched internally. The parameters passed to this callback are
+.I sig
+which must be equal to
+.B SIGCHLD
+(may be other signal will be managed later) and
+.IR "info",
+the signal information passed by Linux to the signal handler when declared through
+.BR "sigaction"(2).
+The function returns
+.BR "PDIP_SIG_HANDLED",
+if the
+.B SIGCHLD
+signal belonged to one of its
+.B PDIP
+objects,
+.B PDIP_SIG_UNKNOWN
+if the signal does not concern any of its
+.B PDIP
+objects or
+.B PDIP_SIG_ERROR
+in case of error. When the return code is
+.BR "PDIP_SIG_UNKNOWN",
+the application is supposed to manage the signal on its side. In the case where this function returns
+.BR "PDIP_SIG_HANDLED",
+the application must not get the status of the child process with calls like
+.BR "wait"(2)
+or
+.BR "waitpid"(2).
+If needed,
+.BR "pdip_status"()
+provides the status.
+.TP
+.I debug_level
+The global debug level of the service. The higher the value, the more debug messages are displayed. 0, disables the debug messages. This parameter can also be set by a call to
+.BR "pdip_set_debug_level()".
+
+.PP
+If a configuration structure is passed to
+.BR "pdip_new"(),
+it is advised to call
+.B pdip_cfg_init()
+which initializes the
+.I cfg
+configuration structure to its default values. Using this call makes any
+future evolutions to the structure transparent to the applications designed
+with older versions of the library. The structure is described below in
+the presentation of
+.BR "pdip_new"().
+
+
+.PP
+.B pdip_new()
+creates a
+.B PDIP
+object. To configure the object, the function is passed an optional parameter 
+.I cfg
+of type:
+
+.nf
+
+typedef struct
+{
+  FILE *dbg_output;   // Stream into which are displayed the debug messages
+                      // of the PDIP object
+                      // If NULL, it defaults to stderr
+  FILE *err_output;   // Stream into which are displayed the error messages
+                      // of the PDIP object
+                      // If NULL, it defaults to stderr
+
+  int debug_level;    // Debug level of the PDIP object. The higher the value,
+                      // the more debug messages are displayed
+                      // Default: 0 (no debug messages)
+
+  unsigned int flags;
+#define PDIP_FLAG_ERR_REDIRECT     0x01 // If set, the stderr of the controlled process
+                                        // is also redirected to the main program.
+                                        // Otherwise, it is inherited from the main program (default)
+
+#define PDIP_FLAG_RECV_ON_THE_FLOW 0x02 // If set, data are returned to the user as
+                                        // they are received even if the regular expression
+                                        // is not found (returned code is PDIP_RECV_DATA)
+                                        // Otherwise, the data is returned when
+                                        // the regular expression is found (default)
+
+  unsigned char *cpu;  // Array of bits describing the CPU affinity of the controlled process
+                       // Allocated/freed with pdip_cpu_alloc()/pdip_cpu_free()
+                       // cf. pdip_cpu(3)
+                       // By default, the affinity is inherited from the main program
+
+  size_t buf_resize_increment;   // Amount of space in bytes to add to the reception
+                                 // buffer each time additional space is needed
+                                 // Default is 1 KB
+
+} pdip_cfg_t;
+
+.fi
+If this parameter is
+.BR "NULL",
+the default values are used. If it is not 
+.BR "NULL",
+it is advised to initialize it with a call to
+.BR "pdip_cfg_init"()
+before setting its fields.
+The function returns a
+.B PDIP
+object of type
+.BR "pdip_t".
+This object is passed as parameter to most of the following services.
+
+
+.PP
+.B pdip_delete()
+is the counterpart of
+.B pdip_new()
+as it deallocates the
+.I ctx
+.B PDIP
+object allocated by a preceding call to
+.BR "pdip_new()".
+If not NULL,
+.I status
+is updated with the termination status of the controlled process.
+
+.PP
+.B pdip_exec()
+executes a program which will be controlled by the
+.I ctx
+.B PDIP
+object.
+.I ac
+and
+.I av
+respectively describe the number of parameters and the parameters of the program to execute. They behave the same as the famous parameters passed to the
+.B "main()"
+function of the C language programs. In other words, they describe the program name to run along with its parameters.
+
+.PP
+.B pdip_fd()
+returns the file descriptor of the
+.I ctx
+.B PDIP
+object (that is to say the file descriptor of the internal pseudo-terminal interfaced with the controlled program). This is useful in event driven applications where it is needed to be warned when data are available from the controlled program.
+
+
+.PP
+.B pdip_set_debug_level()
+sets the debug level of the
+.I ctx
+.B PDIP
+object to the value of
+.IR "level".
+The higher the value of
+.IR "level",
+the more debug messages will be displayed. The debug level and the output stream for the debug messages can also be configured at
+object creation time through the parameter passed to
+.BR "pdip_new()".
+If
+.I ctx
+is NULL, the service sets the global debug level of the service. That is to say, this controls the debug messages not linked to
+.B PDIP
+objects. A debug level equal to 0 deactivates the display of debug messages.
+
+.PP
+.B pdip_send()
+sends a string formatted with
+.I format
+to the process controlled by the
+.I ctx
+.B PDIP
+object. The behaviour of the format is compliant with
+.BR "printf"(3).
+The size of the internal buffer to format the string is 4096 bytes. Over this limit, the function returns an error.
+
+.PP
+.B pdip_recv()
+receives data from the process controlled by the
+.I ctx
+.B PDIP
+object. The user may pass a regular expression (\fIregular_expr\fR) compliant with
+.BR "regex"(7)
+and/or a
+.IR "timeout".
+The data reception stops once either the timeout is elapsed or the regular expression is found. If neither the regular expression is found
+(or \fIregular_expr\fR is NULL) nor the timeout is set (i.e. \fItimeout\fR is NULL), the function waits indefinitely unless the controlled process dies. The function is passed three additional parameters
+.IR "display",
+.I "display_sz"
+and
+.I "data_sz"
+which respectively contain the address of a
+.B dynamic
+memory buffer to store the data in, the physical size of the buffer and the number of bytes that the service stored into it. The data is NUL terminated by the service.
+.I data_sz
+does not count this last character (this is equivallent to the result of a call to
+.BR "strlen"(3)
+on the buffer). If the
+.I display
+address of the buffer is NULL or the
+.I display_sz
+physical size of the buffer is not sufficient to contain the received data, the buffer is allocated or reallocated (in the latter case, the former buffer is freed by the service). Anyway,
+.I display
+and
+.I display_sz
+are respectively updated with the new address and the new size of the buffer. If the user puts a non NULL address in
+.I display
+parameter, \fBIT IS VERY IMPORTANT TO PASS THE BEGINNING ADDRESS OF A DYNAMIC MEMORY BUFFER\fP as the service may reallocate or free it through calls to
+.BR "realloc"(3)
+or
+.BR "free"(3).
+The timeout is a structure defined in <sys/time.h> as:
+
+.nf
+
+struct timeval
+{
+  long    tv_sec;     // Seconds
+  long    tv_usec;    // Microseconds
+};
+
+.fi
+
+
+.PP
+.B pdip_sig()
+sends the
+.I sig
+Linux signal to the process controlled by the
+.I ctx
+.B PDIP
+object. The list of available signals is defined in
+.BR "<signal.h>".
+
+
+.PP
+.B pdip_flush()
+flushes any outstanding data from the
+.I ctx
+.B PDIP
+object. In other words, it concerns any data coming from the controlled process which have not been received yet by the application through a call to
+.BR "pdip_recv()"
+service. The function behaves the same as
+.B "pdip_recv()"
+to update its
+.IR "display",
+.I "display_sz"
+and
+.I "data_sz"
+parameters.
+
+
+.PP
+.B pdip_status()
+returns the exit status in
+.I status
+(if not
+.BR "NULL")
+of the dead controlled process attached to the
+.I ctx
+.B PDIP
+object. The value of
+.I status
+can be inspected with macros as explained in
+.BR "wait"(2).
+If the third parameter
+.I blocking
+is set to non 0, the service waits until the controlled process terminates. If
+set to 0, the service returns immediately reporting an error (\fBerrno\fP
+is set to
+.BR "EAGAIN")
+if the controlled process is not terminated or 0 if the process is terminated.
+
+.PP
+.B pdip_lib_initialize()
+is to be called in child processes using the
+.B PDIP
+API. By default,
+.B PDIP
+API is deactivated upon
+.BR "fork"(2).
+
+.SH RETURN VALUE
+
+.PP
+.BR "pdip_new()"
+returns a
+.B PDIP
+object of type
+.B pdip_t
+if there are no error or
+.BR "(pdip_t)0"
+upon error (\fBerrno\fP is set).
+
+.PP
+.BR "pdip_exec()"
+returns the pid of the controlled process or -1 upon error (\fBerrno\fP is set).
+
+
+.PP
+.BR "pdip_fd()"
+returns the file descriptor of the pseudo-terminal linked with the controlled process or -1 upon error (\fBerrno\fP is set).
+
+
+.PP
+.BR "pdip_cfg_init()",
+.BR "pdip_configure()",
+.BR "pdip_delete()",
+.BR "pdip_set_debug_level()",
+.BR "pdip_flush()",
+.BR "pdip_sig()",
+.BR "pdip_status()"
+and
+.BR "pdip_lib_initialize()"
+return 0 when there are no error or -1 upon error (\fBerrno\fP is set).
+
+.PP
+.BR "pdip_send()"
+returns the amount of sent characters or -1 upon error (\fBerrno\fP is set).
+
+.PP
+.BR "pdip_recv()"
+returns:
+.RS
+.TP
+.B PDIP_RECV_FOUND
+The regular expression is found. There are data in the returned buffer (i.e. \fIdata_sz\fR > 0 unless the regular expression matched the beginning of the first line of the incoming data).
+.TP
+.B PDIP_RECV_TIMEOUT
+The timeout elapsed.
+.TP
+.B PDIP_RECV_DATA
+No regular expression was passed and data arrived (with or without timeout). Received data are in the returned buffer (i.e. \fIdata_sz\fR > 0). This return code is also possible with a regular expression when PDIP_FLAG_RECV_ON_THE_FLOW is set.
+.TP
+.B PDIP_RECV_ERROR
+An error occured (\fBerrno\fP is set). However, there may be received data in the returned buffer (i.e. If \fIdata_sz\fR > 0).
+.RE
+
+.SH ERRORS
+The functions may set
+.B errno
+with the following values:
+.TP
+.B EINVAL
+Invalid parameter
+.TP
+.B ECHILD
+Program execution error or terminated prematurely
+.TP
+.B EAGAIN
+Status not available (process not dead) 
+.TP
+.B ENOENT
+Object not found
+.TP
+.B ESRCH
+Process not running
+.TP
+.B EPERM
+Operation not permitted as another process is already under control or the controlled process is not dead yet
+.TP
+.B ENOSPC
+Argument too big for internal buffer
+
+
+.SH MUTUAL EXCLUSION
+
+The service supposes that each
+.B PDIP
+object is managed at most by one thread. If an application shares a
+.B PDIP
+object between multiple threads, it is responsible to manage the mutual
+exclusion on its side.
+
+
+.SH EXAMPLES
+
+The following program controls a
+.B bash
+shell. Before running the shell, the program modifies the
+.B PS1
+environment variable to define the prompt displayed by the shell otherwise the prompt would be
+inherited by the current shell which may be anything defined by the operator.
+Then, it synchronizes on the display of the first prompt, executes the
+.BR "ls -la /"
+command and synchronizes on the prompt appearing right after the command execution. Then it executes
+the
+.B exit
+command to stop the shell.
+
+.nf
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include "pdip.h"
+
+
+
+int main(int ac, char *av[])
+{
+pdip_t      pdip;
+char       *bash_av[4];
+int         rc;
+char       *display;
+size_t      display_sz;
+size_t      data_sz;
+pdip_cfg_t  cfg;
+int         status;
+
+  (void)ac;
+  (void)av;
+
+  // Let the service manage the SIGCHLD signal as we don't fork/exec any
+  // other program
+  rc = pdip_configure(1, 0);
+  if (rc != 0)
+  {
+    fprintf(stderr, "pdip_configure(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Create a PDIP object
+  pdip_cfg_init(&cfg);
+  // The bash prompt is displayed on stderr. So, to synchronize on it, we must
+  // redirect stderr to the PTY between PDIP and bash
+  cfg.flags |= PDIP_FLAG_ERR_REDIRECT;
+  cfg.debug_level = 0;
+  pdip = pdip_new(&cfg);
+  if (!pdip)
+  {
+    fprintf(stderr, "pdip_new(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Export the prompt of the BASH shell
+  rc = setenv("PS1", "PROMPT> ", 1);
+  if (rc != 0)
+  {
+    fprintf(stderr, "setenv(PS1): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Attach a bash shell to the PDIP object
+  bash_av[0] = "/bin/bash";
+  bash_av[1] = "--noprofile";
+  bash_av[2] = "--norc";
+  bash_av[3] = (char *)0;
+  rc = pdip_exec(pdip, 3, bash_av);
+  if (rc != 0)
+  {
+    fprintf(stderr, "pdip_exec(bash): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Synchronize on the first displayed prompt
+  display = (char *)0;
+  display_sz = 0;
+  data_sz = 0;
+  rc = pdip_recv(pdip, "^PROMPT> ", &display, &display_sz, &data_sz, (struct timeval*)0);
+  if (rc != PDIP_RECV_FOUND)
+  {
+    fprintf(stderr, "pdip_recv(): Unexpected return code %d\\n", rc);
+    return 1;
+  }
+
+  // Display the result
+  printf("%s", display);
+
+  // Execute the "ls -la /" command
+  rc = pdip_send(pdip, "ls -la /\\n");
+  if (rc < 0)
+  {
+    fprintf(stderr, "pdip_send(ls -la /): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Synchronize on the prompt displayed right after the command execution
+  // We pass the same buffer that will be eventually reallocated
+  rc = pdip_recv(pdip, "^PROMPT> ", &display, &display_sz, &data_sz, (struct timeval*)0);
+  if (rc != PDIP_RECV_FOUND)
+  {
+    fprintf(stderr, "pdip_recv(): Unexpected return code %d\\n", rc);
+    return 1;
+  }
+
+  // Display the result
+  printf("%s", display);
+
+  // Execute "exit" to go out of the shell
+  rc = pdip_send(pdip, "exit\\n");
+  if (rc < 0)
+  {
+    fprintf(stderr, "pdip_send(exit): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Wait for the end of "bash"
+  rc = pdip_status(pdip, &status, 1);
+  if (0 != rc)
+  {
+    fprintf(stderr, "pdip_status(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  printf("bash ended with status 0x%x\\n", status);
+
+  // Delete the PDIP object
+  rc = pdip_delete(pdip, 0);
+  if (rc != 0)
+  {
+    fprintf(stderr, "pdip_delete(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  return 0;
+
+} // main
+
+
+.fi
+
+
+The program execution displays:
+
+.nf
+
+$ ./man_exe_1
+PROMPT> ls -la /
+total 108
+drwxr-xr-x  24 root root  4096 oct.  22 21:28 .
+drwxr-xr-x  24 root root  4096 oct.  22 21:28 ..
+drwxr-xr-x   2 root root  4096 juil.  6 17:22 bin
+drwxr-xr-x   4 root root  4096 oct.  22 21:42 boot
+drwxrwxr-x   2 root root  4096 janv.  4  2017 cdrom
+[...]
+lrwxrwxrwx   1 root root    29 oct.  22 21:28 vmlinuz -> boot/vmlinuz-4.8.0-59-generic
+lrwxrwxrwx   1 root root    29 juil.  6 17:24 vmlinuz.old -> boot/vmlinuz-4.8.0-58-generic
+PROMPT> bash ended with status 0x0
+
+
+.fi
+
+
+
+The following program is passed a mathematic operation as argument. It uses
+.B bc
+tool to compute it. Some precautions are required for the synchronization as
+.B bc
+does not display any prompt. Hence, the program uses "end of line" pattern matching.
+
+.nf
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <libgen.h>
+#include "pdip.h"
+
+
+int main(int ac, char *av[])
+{
+pdip_t      pdip;
+char       *bash_av[3];
+int         rc;
+char       *display;
+size_t      display_sz;
+size_t      data_sz;
+pdip_cfg_t  cfg;
+char       *op;
+int         i;
+int         status;
+
+  if (ac != 2)
+  {
+    fprintf(stderr, "Usage: %s operation\\n", basename(av[0]));
+    return 1;
+  }
+
+  // Let the service manage the SIGCHLD signal as we don't fork/exec any
+  // other program
+  rc = pdip_configure(1, 0);
+  if (rc != 0)
+  {
+    fprintf(stderr, "pdip_configure(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  op = av[1];
+
+  // Create a PDIP object
+  pdip_cfg_init(&cfg);
+  cfg.debug_level = 0;
+  pdip = pdip_new(&cfg);
+  if (!pdip)
+  {
+    fprintf(stderr, "pdip_new(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Attach the "bc" command to the PDIP object
+  // Option "-q" launches "bc" in quiet mode: it does not display
+  // the welcome banner
+  bash_av[0] = "bc";
+  bash_av[1] = "-q";
+  bash_av[2] = (char *)0;
+  rc = pdip_exec(pdip, 2, bash_av);
+  if (rc != 0)
+  {
+    fprintf(stderr, "pdip_exec(bc -q): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Execute the operation
+  rc = pdip_send(pdip, "%s\\n", op);
+  if (rc < 0)
+  {
+    fprintf(stderr, "pdip_send(op): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Initialize the display buffer
+  display = (char *)0;
+  display_sz = 0;
+  data_sz = 0;
+
+  // For some reasons, "bc" echoes the operation two times ?!?
+  // ==> Skip them
+  for (i = 0; i < 2; i ++)
+  {
+    // Synchronize on the echo
+    // We pass the same buffer that will be eventually reallocated
+    rc = pdip_recv(pdip, "^.+$", &display, &display_sz, &data_sz, (struct timeval*)0);
+    if (rc != PDIP_RECV_FOUND)
+    {
+      fprintf(stderr, "pdip_recv(): Unexpected return code %d\\n", rc);
+      return 1;
+    }
+
+    // Print the operation on the screen (one time :-)
+    if (0 == i)
+    {
+      printf("%s=", display);
+    }
+
+    // Skip the end of line
+    rc = pdip_recv(pdip, "$", &display, &display_sz, &data_sz, (struct timeval*)0);
+    if (rc != PDIP_RECV_FOUND)
+    {
+      fprintf(stderr, "pdip_recv($): Unexpected return code %d\\n", rc);
+      return 1;
+    }
+  } // End for
+
+  // Synchronize on the result of the operation
+  rc = pdip_recv(pdip, "^.+$", &display, &display_sz, &data_sz, (struct timeval*)0);
+  if (rc != PDIP_RECV_FOUND)
+  {
+    fprintf(stderr, "pdip_recv(): Unexpected return code %d\\n", rc);
+    return 1;
+  }
+
+  // Display the result of the operation with '\\n' as the match
+  // does not embed the end of line
+  printf("%s\\n", display);
+  fflush(stdout);
+
+  // Skip the end of line
+  rc = pdip_recv(pdip, "$", &display, &display_sz, &data_sz, (struct timeval*)0);
+  if (rc != PDIP_RECV_FOUND)
+  {
+    fprintf(stderr, "pdip_recv($): Unexpected return code %d\\n", rc);
+    return 1;
+  }
+
+  // Execute "quit" to go out
+  rc = pdip_send(pdip, "quit\\n");
+  if (rc < 0)
+  {
+    fprintf(stderr, "pdip_send(quit): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  // Synchronize on the echo of "quit"
+  // We pass the same buffer that will be eventually reallocated
+  rc = pdip_recv(pdip, "^quit$", &display, &display_sz, &data_sz, (struct timeval*)0);
+  if (rc != PDIP_RECV_FOUND)
+  {
+    fprintf(stderr, "pdip_recv(): Unexpected return code %d\\n", rc);
+    return 1;
+  }
+
+  // Wait for the end of "bc"
+  rc = pdip_status(pdip, &status, 1);
+  if (0 != rc)
+  {
+    fprintf(stderr, "pdip_status(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  printf("bc ended with status 0x%x\\n", status);
+
+  // Delete the PDIP object
+  rc = pdip_delete(pdip, 0);
+  if (rc != 0)
+  {
+    fprintf(stderr, "pdip_delete(): '%m' (%d)\\n", errno);
+    return 1;
+  }
+
+  return 0;
+
+} // main
+
+.fi
+
+The program execution for "67*18" displays:
+
+.nf
+
+$ ./man_exe_2 67*18
+67*18=1206
+bc ended with status 0x0
+
+.fi
+
+
+.SH AUTHOR
+Rachid Koucha
+
+.SH "SEE ALSO"
+.BR pdip (1),
+.BR pdip_cpu (3),
+.BR regex (7),
+.BR sigaction (2),
+.BR printf (3),
+.BR wait (2).

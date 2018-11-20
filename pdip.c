@@ -115,7 +115,7 @@
 
 #define _GNU_SOURCE
 #include <getopt.h>
-#include <sys/wait.h>
+//#include <sys/wait.h>
 #include <libgen.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -124,13 +124,13 @@
 #include <assert.h>
 #include <ctype.h>
 #include <string.h>
-#include <sys/select.h>
+//#include <sys/select.h>
 #include <signal.h>
 #include <stdlib.h>
-#include <regex.h>
+//include <regex.h>
 #include <time.h>
-#include <termios.h>
-#include <sys/ioctl.h>
+//#include <termios.h>
+//#include <sys/ioctl.h>
 
 #include "config.h"
 #include "pdip_util.h"
@@ -706,7 +706,7 @@ int status;
     kill(pdip_pid, SIGTERM);
     sleep(1);
 
-    // The signal handler for SIGCHLD may be triggered if the child dies  
+    // The signal handler for SIGCHLD may be triggered if the child dies
 
     // If the sub-process didn't died ==> SIGKILL
     if (!pdip_dead_prog)
@@ -893,7 +893,7 @@ int rc;
         PDIP_DUMP2(0, pdip_buf, (unsigned int)rc);
       }
     } while (rc > 0);
-  }  
+  }
 
 } // pdip_dump_outstanding_data
 
@@ -1246,7 +1246,7 @@ one_more_time:
       {
         goto one_more_time;
       }
-  
+
       // If launched in background and the output is the terminal, we will receive a
       // SIGTTOU. The signal handler will set pdip_background_out to 1
       if ((pdip_out == fd || pdip_err == fd) && (pdip_background_out))
@@ -1286,7 +1286,7 @@ int  rc;
       (void)pdip_write(pdip_out, pdip_buf, rc);
     }
   } while (rc > 0);
-  
+
 } // pdip_flush
 
 
@@ -2309,7 +2309,7 @@ int             err_sav;
                 goto end;
 	      }
 
-              // Translate the format into a string 
+              // Translate the format into a string
               l = pdip_bufsz;
               rc = pdip_format_params(pdip_argv[1], pdip_buf1, &l);
               if (rc < 0)
@@ -2319,7 +2319,7 @@ int             err_sav;
                 goto end;
               }
               PDIP_DBG(1, "Input line %u: %s %s\n", lineno, pKeyword, pdip_argv[1]);
-              pdip_write(pdip_out, pdip_buf1, l); 
+              pdip_write(pdip_out, pdip_buf1, l);
 	    } // End if print
 
             // dbg ?
@@ -2764,10 +2764,10 @@ int            err_sav;
     {
     pid_t mypid = getpid();
     int   fd;
- 
+
       assert(fds > 2);
       assert(pdip_pty > 2);
-      
+
       // Redirect input/outputs to the slave side of PTY
       close(0);
       close(1);
@@ -2810,7 +2810,7 @@ int            err_sav;
         exit(1);
       }
 
-      // As the child is a session leader, set the controlling terminal to be the slave side of the PTY 
+      // As the child is a session leader, set the controlling terminal to be the slave side of the PTY
       rc = ioctl(fds, TIOCSCTTY, 1);
       if (rc < 0)
       {

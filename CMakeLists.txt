@@ -44,7 +44,10 @@ INCLUDE(GNUInstallDirs)
 
 MESSAGE(STATUS "Building PDIP version ${PDIP_VERSION}")
 
-CONFIGURE_FILE(config.h.cmake config.h)
+#CONFIGURE_FILE(config.h.cmake config.h)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 
 SET(pdip_man_api_src_3 pdip_configure.3 pdip_lib_initialize.3 pdip_signal_handler.3 pdip_init_cfg.3 pdip_new.3 pdip_delete.3 pdip_exec.3 pdip_fd.3 pdip_status.3 pdip_set_debug_level.3 pdip_send.3 pdip_recv.3 pdip_sig.3 pdip_flush.3 pdip_cpu_nb.3 pdip_cpu_alloc.3 pdip_cpu_free.3 pdip_cpu_zero.3 pdip_cpu_all.3 pdip_cpu_set.3 pdip_cpu_unset.3 pdip_cpu_isset.3)
@@ -164,7 +167,7 @@ IF(${IS_ADMIN})
 ENDIF()
 
 
-INCLUDE_DIRECTORIES(.)
+#INCLUDE_DIRECTORIES(.)
 
 ADD_SUBDIRECTORY(test)
 ADD_SUBDIRECTORY(isys)

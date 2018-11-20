@@ -63,6 +63,8 @@
 #include "pdip_p.h"
 #include "pdip_util.h"
 
+#include "plat_types.h"
+
 
 
 /*

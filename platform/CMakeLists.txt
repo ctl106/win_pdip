@@ -1,5 +1,5 @@
 set(PLATFORM_HEADERS
-  ptypes.h
+  plat_types.h
 )
 
 set(PLATFORM_SOURCES

@@ -135,7 +135,7 @@
 #include "config.h"
 #include "pdip_util.h"
 
-#include "ptypes.h"
+#include "plat_types.h"
 
 
 

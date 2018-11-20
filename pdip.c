@@ -676,7 +676,7 @@ int          err_sav;
   if (SIG_ERR == p)
   {
     err_sav = errno;
-    PDIP_ERR("Error '%m' (%d) on signal()\n", errno);
+    PDIP_ERR("Error '%s' (%d) on signal()\n", strerror(errno), errno);
     errno = err_sav;
     return;
   }
@@ -793,7 +793,7 @@ int err_sav;
       }
 
       err_sav = errno;
-      //PDIP_ERR("Error '%m' (%d) on read(fd:%d, l:%"PRISIZE"u)\n", errno, fd, l);
+      //PDIP_ERR("Error '%s' (%d) on read(fd:%d, l:%"PRISIZE"u)\n", strerror(errno), errno, fd, l);
       errno = err_sav;
       return -1;
     }
@@ -919,7 +919,7 @@ int   status;
   // If error
   if (-1 == pid)
   {
-    //PDIP_ERR("Error %d '%m' from waitpid()\n", errno);
+    //PDIP_ERR("Error %d '%s' from waitpid()\n", errno, strerror(errno)));
     assert(ECHILD == errno);
     return;
   }
@@ -1068,7 +1068,7 @@ int                 err_sav;
   if (0 != rc)
   {
     err_sav = errno;
-    PDIP_ERR("Error '%m' (%d) on sigaction()\n", errno);
+    PDIP_ERR("Error '%s' (%d) on sigaction()\n", strerror(errno), errno);
     errno = err_sav;
     return;
   }
@@ -1139,7 +1139,7 @@ int                 i;
     if (0 != rc)
     {
       err_sav = errno;
-      PDIP_ERR("Error '%m' (%d) on sigaction()\n", errno);
+      PDIP_ERR("Error '%s' (%d) on sigaction()\n", strerror(errno), errno);
       errno = err_sav;
       return;
     }
@@ -1179,7 +1179,7 @@ int err_sav;
     if (-1 == rc)
     {
       err_sav = errno;
-      PDIP_ERR("Error '%m' (%d) on read(%d)\n", errno, fd);
+      PDIP_ERR("Error '%s' (%d) on read(%d)\n", strerror(errno), errno, fd);
       errno = err_sav;
       return -1;
     }
@@ -1257,7 +1257,7 @@ one_more_time:
       }
 
       saved_errno = errno;
-      PDIP_ERR("Error '%m' (%d) on write()\n", errno);
+      PDIP_ERR("Error '%s' (%d) on write()\n", strerror(errno), errno);
       errno = saved_errno;
       return -1;
     }
@@ -1747,7 +1747,7 @@ unsigned int    lbuf;
         }
 
         err_sav = errno;
-        PDIP_ERR("Error '%m' (%d) on select\n", errno);
+        PDIP_ERR("Error '%s' (%d) on select\n", strerror(errno), errno);
         errno = err_sav;
         rc = -1;
         goto end;
@@ -1969,7 +1969,7 @@ int             err_sav;
         }
 
         err_sav = errno;
-        PDIP_ERR("Error '%m' (%d) on select\n", errno);
+        PDIP_ERR("Error '%s' (%d) on select\n", strerror(errno), errno);
         errno = err_sav;
         rc = -1;
         goto end;
@@ -2402,7 +2402,7 @@ int             err_sav;
 	      {
 	        case -1:
 		{
-                  PDIP_ERR("Line %u: fork() failed with error %d ('%m')\n", lineno, errno);
+                  PDIP_ERR("Line %u: fork() failed with error %d ('%s')\n", lineno, errno, strerror(errno));
                   rc = -1;
                   goto end;
 		}
@@ -2430,8 +2430,8 @@ int             err_sav;
 		    }
                     else
 		    {
-                      PDIP_ERR("Line %u: malloc(%"PRISIZE"u) failed with error %d ('%m')\n"
-                               , lineno, (size_t)(pdip_argc * sizeof(char *)), errno);
+                      PDIP_ERR("Line %u: malloc(%"PRISIZE"u) failed with error %d ('%s')\n"
+                               , lineno, (size_t)(pdip_argc * sizeof(char *)), errno, strerror(errno));
 		    }
 		  }
                   else // Asynchronous mode
@@ -2449,8 +2449,8 @@ int             err_sav;
 		    }
                     else
 		    {
-                      PDIP_ERR("Line %u: malloc(%"PRISIZE"u) failed with error %d ('%m')\n"
-                               , lineno, (size_t)(pdip_argc * sizeof(char *)), errno);
+                      PDIP_ERR("Line %u: malloc(%"PRISIZE"u) failed with error %d ('%s')\n"
+                               , lineno, (size_t)(pdip_argc * sizeof(char *)), errno, strerror(errno));
 		    }
 		  } // End if synchronous
 
@@ -2467,7 +2467,7 @@ int             err_sav;
                     // Wait for the end of the child
                     if (waitpid(pid_sh, &status, 0) < 0)
 		    {
-                      PDIP_ERR("Line %u: waitpid(%d) failed with error %d ('%m')\n", lineno, pid_sh, errno);
+                      PDIP_ERR("Line %u: waitpid(%d) failed with error %d ('%s')\n", lineno, pid_sh, errno, strerror(errno));
                       rc = -1;
                       goto end;
 		    }
@@ -2679,7 +2679,7 @@ int            err_sav;
   if (pdip_pty < 0)
   {
     err_sav = errno;
-    PDIP_ERR("Impossible to get a master pseudo-terminal - errno = '%m' (%d)\n", errno);
+    PDIP_ERR("Impossible to get a master pseudo-terminal - errno = 's' (%d)\n", strerror(errno), errno);
     errno = err_sav;
     return 1;
   }
@@ -2689,7 +2689,7 @@ int            err_sav;
   if (0 != grantpt(pdip_pty))
   {
     err_sav = errno;
-    PDIP_ERR("Impossible to grant access to slave pseudo-terminal - errno = '%m' (%d)\n", errno);
+    PDIP_ERR("Impossible to grant access to slave pseudo-terminal - errno = '%s' (%d)\n", strerror(errno), errno);
     close(pdip_pty);
     errno = err_sav;
     return 1;
@@ -2700,7 +2700,7 @@ int            err_sav;
   if (0 != unlockpt(pdip_pty))
   {
     err_sav = errno;
-    PDIP_ERR("Impossible to unlock pseudo-terminal master/slave pair - errno = '%m' (%d)\n", errno);
+    PDIP_ERR("Impossible to unlock pseudo-terminal master/slave pair - errno = '%s' (%d)\n", strerror(errno), errno);
     close(pdip_pty);
     errno = err_sav;
     return 1;
@@ -2711,7 +2711,7 @@ int            err_sav;
   if (NULL == pty_slave_name)
   {
     err_sav = errno;
-    PDIP_ERR("Impossible to get the name of the slave pseudo-terminal - errno = '%m' (%d)\n", errno);
+    PDIP_ERR("Impossible to get the name of the slave pseudo-terminal - errno = '%s' (%d)\n", strerror(errno), errno);
     close(pdip_pty);
     errno = err_sav;
     return 1;
@@ -2722,7 +2722,7 @@ int            err_sav;
   if (fds < 0)
   {
     err_sav = errno;
-    PDIP_ERR("Impossible to open the slave pseudo-terminal - errno = '%m' (%d)\n", errno);
+    PDIP_ERR("Impossible to open the slave pseudo-terminal - errno = '%s' (%d)\n", strerror(errno), errno);
     close(pdip_pty);
     errno = err_sav;
     return 1;
@@ -2756,7 +2756,7 @@ int            err_sav;
     case -1 :
     {
       err_sav = errno;
-      PDIP_ERR("Error '%m' (%d) on fork()\n", errno);
+      PDIP_ERR("Error '%s' (%d) on fork()\n", strerror(errno), errno);
       errno = err_sav;
       return 1;
     }
@@ -2796,7 +2796,7 @@ int            err_sav;
       if (rc < 0)
       {
         err_sav = errno;
-        PDIP_ERR("Error '%m' (%d) on ioctl(TIOCNOTTY)\n", errno);
+        PDIP_ERR("Error '%s' (%d) on ioctl(TIOCNOTTY)\n", strerror(errno), errno);
         errno = err_sav;
         exit(1);
       }
@@ -2807,7 +2807,7 @@ int            err_sav;
       if (rc < 0)
       {
         err_sav = errno;
-        PDIP_ERR("Error '%m' (%d) on setsid()\n", errno);
+        PDIP_ERR("Error '%s' (%d) on setsid()\n", strerror(errno), errno);
         errno = err_sav;
         exit(1);
       }
@@ -2817,7 +2817,7 @@ int            err_sav;
       if (rc < 0)
       {
         err_sav = errno;
-        PDIP_ERR("Error '%m' (%d) on ioctl(TIOCSCTTY)\n", errno);
+        PDIP_ERR("Error '%s' (%d) on ioctl(TIOCSCTTY)\n", strerror(errno), errno);
         errno = err_sav;
         exit(1);
       }
@@ -2828,7 +2828,7 @@ int            err_sav;
       if (rc < 0)
       {
         err_sav = errno;
-        PDIP_ERR("Error '%m' (%d) on ioctl(TIOCSPGRP)\n", errno);
+        PDIP_ERR("Error '%s' (%d) on ioctl(TIOCSPGRP)\n", strerror(errno), errno);
         errno = err_sav;
         exit(1);
       }
@@ -2839,7 +2839,7 @@ int            err_sav;
       if (rc < 0)
       {
         err_sav = errno;
-        PDIP_ERR("Error '%m' (%d) on setpgid()\n", errno);
+        PDIP_ERR("Error '%s' (%d) on setpgid()\n", strerror(errno), errno);
         errno = err_sav;
         exit(1);
       }
@@ -2848,7 +2848,7 @@ int            err_sav;
       rc = execvp(params[0], params);
 
       // The error message can't be generated as the outputs are redirected to the PTY
-      //PDIP_ERR("Error '%m' (%d) while running '%s'\n", errno, params[0]);
+      //PDIP_ERR("Error '%s' (%d) while running '%s'\n", strerror(errno), errno, params[0]);
 
       _exit(1);
     }
@@ -2891,7 +2891,7 @@ int            err_sav;
         if (pdip_in < 0)
         {
           err_sav = errno;
-          PDIP_ERR("open('%s'): '%m' (%d)\n", pScript, errno);
+          PDIP_ERR("open('%s'): '%s' (%d)\n", pScript, strerror(errno), errno);
           errno = err_sav;
           return 1;
         }

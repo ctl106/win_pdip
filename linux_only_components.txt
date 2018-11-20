@@ -1,7 +1,60 @@
 pdip.c
+	// includes
 	#include <sys/wait.h>
 	#include <sys/select.h>
 	#include <regex.h>
 	#include <termios.h>
 	#include <sys/ioctl.h>
 	#include "config.h"
+	
+	// macros(?)
+	SIGTERM			-	708
+	SIGKILL			-	716
+	SIGTTOU			-	737
+	SIGTTIN			-	745
+	SIGCHILD		-	912, 1060
+	WHONOHANG		-	915
+	SIGALARM		-	1035
+	SA_NOCLDSTOP	-	1066
+	SA_RESTART		-	1066
+	SA_RESETHANDE	-	1066
+	
+	// types
+	fd_set		-	820
+	sigset_t	-	1054
+	siginfo_t	-	1084
+	
+	// structs
+	struct sigaction	-	1053
+	
+	// functions and function-like macros
+	kill()			-	708, 716
+	waitpid()		-	724
+	FD_ZERO()		-	826
+	FD_SET()		-	827
+	select()		-	832
+	FD_ISSET()		-	857
+	WIFEXITED()		-	930
+	WEXITSTATUS()	-	932
+	WIFSIGNALED()	-	936
+	WTERMSIG()		-	938
+	WCOREDUMP()		-	938
+	sigemptyset()	-	1059
+	sigaddset()		-	1060
+	sigaction()		-	1067
+	
+	
+	// misc
+	%d for pid_t	-	917, 932, 938, 942, 965, 972, 984, 988, 1008
+		As it happens there is no standard print specifier
+		Additionally, my types.h file has definitions of different sizes,
+		depending on what flags are set.
+		Recommended solution: define a print specifier macro PRIPID
+	
+[FIXED]	%m unknown conversion type	-	1071
+		A GNU extension for outputting strerr(errno)
+		https://stackoverflow.com/questions/20577557/whats-the-meaning-of-the-m-formatting-specifier
+		Given that this is a compiler-specific feature (that I'm suprised is
+		failing with my GCC, but maybe that's on MinGW, Idk), we should get rid
+		of this in favor of an explicit call.
+	

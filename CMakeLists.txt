@@ -2,11 +2,12 @@ cmake_minimum_required(VERSION 2.6)
 
 PROJECT(pdip C)
 
-if(WIN32)
+# Set where to start looking for *nix programs
+IF(WIN32)
   SET(POSIX_ROOT "C:/Program\ Files/Git")
-else()
+ELSE()
   SET(POSIX_ROOT "")
-endif()
+ENDIF()
 
 INCLUDE (FindGZIP.cmake)
 
@@ -137,15 +138,30 @@ FOREACH(man ${pdip_man_api_gz_3})
 ENDFOREACH(man)
 
 # Get the user identifier
-EXECUTE_PROCESS(COMMAND id -u
-                OUTPUT_VARIABLE USER_ID)
+IF(WIN32)
+  SET(USER_ID_COMMAND "${CMAKE_SOURCE_DIR}/GetUserID.bat")
+ELSE()
+  SET(USER_ID_COMMAND "id -u")
+ENDIF()
+EXECUTE_PROCESS(COMMAND ${USER_ID_COMMAND} OUTPUT_VARIABLE USER_ID OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 MESSAGE("The user id is ${USER_ID}")
 
+# Check if current user is super user
+IF(WIN32)
+  EXECUTE_PROCESS(COMMAND "${CMAKE_SOURCE_DIR}/IsAdmin.bat" OUTPUT_VARIABLE IS_ADMIN OUTPUT_STRIP_TRAILING_WHITESPACE)
+ELSE()
+  IF(${USER_ID} EQUAL 0)
+    SET(IS_ADMIN 1)
+  ELSE()
+    SET(IS_ADMIN 0)
+  ENDIF()
+ENDIF()
+
 # We change the rights accesses only if we are running as super user
-IF(${USER_ID} EQUAL 0)
+IF(${IS_ADMIN})
   INSTALL(SCRIPT pdip_chown.cmake)
-ENDIF(${USER_ID} EQUAL 0)
+ENDIF()
 
 
 INCLUDE_DIRECTORIES(.)

@@ -204,10 +204,10 @@ one_more_time:
       state = ctxp->state;
       PDIP_UNMASK_SIG();
 
-      // The controlled program may be dead 
+      // The controlled program may be dead
       if (state != PDIP_STATE_ALIVE)
       {
-        PDIP_ERR(ctxp, "Controlled program '%s' (%d) is dead\n", ctxp->av[0], ctxp->pid);
+        PDIP_ERR(ctxp, "Controlled program '%s' (%"PRIPID") is dead\n", ctxp->av[0], ctxp->pid);
 
         errno = err_sav;
 
@@ -222,7 +222,7 @@ one_more_time:
 	}
       }
 
-      PDIP_ERR(ctxp, "write(%zu): '%m' (%d)\n", len - 1, errno);
+      PDIP_ERR(ctxp, "write(%"PRISIZE"): '%m' (%d)\n", len - 1, errno);
       errno = err_sav;
       return -1;
     }
@@ -272,10 +272,10 @@ int state;
       // here before the signal handler updates the state of the object!)
       if (state != PDIP_STATE_ALIVE)
       {
-        PDIP_DBG(ctxp, 1, "Controlled program '%s' (%d) is dead\n", ctxp->av[0], ctxp->pid);
+        PDIP_DBG(ctxp, 1, "Controlled program '%s' (%"PRIPID") is dead\n", ctxp->av[0], ctxp->pid);
       }
 
-      PDIP_DBG(ctxp, 1, "read(fd:%d, l:%zu): '%m' (%d), state=%d\n", ctxp->pty_master, l, errno, state);
+      PDIP_DBG(ctxp, 1, "read(fd:%d, l:%"PRISIZE"): '%m' (%d), state=%d\n", ctxp->pty_master, l, errno, state);
       errno = err_sav;
       return -1;
     } // End if read error
@@ -315,7 +315,7 @@ fd_set          fdset;
 int             err_sav = 0;
 size_t          len;
 
- PDIP_DBG(ctxp, 1, "Reading data from %d, timeout %p (%lu s, %lu us)\n", ctxp->pid, to, (to ? to->tv_sec : 0), (to ? to->tv_usec : 0));
+ PDIP_DBG(ctxp, 1, "Reading data from %"PRIPID", timeout %p (%lu s, %lu us)\n", ctxp->pid, to, (to ? to->tv_sec : 0), (to ? to->tv_usec : 0));
 
 do_it_again:
 
@@ -332,7 +332,7 @@ do_it_again:
         goto do_it_again;
       }
 
-      PDIP_ERR(ctxp, "select(): '%m' (%d), data_sz=%zu\n", errno, *data_sz);
+      PDIP_ERR(ctxp, "select(): '%m' (%d), data_sz=%"PRISIZE"\n", errno, *data_sz);
       rc = -1;
       goto end;
     }
@@ -340,7 +340,7 @@ do_it_again:
 
     case 0: // Timeout
     {
-      PDIP_DBG(ctxp, 5, "Timeout (data_sz=%zu)\n", *data_sz);
+      PDIP_DBG(ctxp, 5, "Timeout (data_sz=%"PRISIZE")\n", *data_sz);
 
       rc = 0;
       goto end;
@@ -369,7 +369,7 @@ do_it_again:
       len = (*display_sz) - (*data_sz) - 1;
       rc = pdip_read(ctxp, *display + *data_sz, len);
       err_sav = errno;
-      PDIP_DBG(ctxp, 3, "Read %d bytes from process %d in buffer %p at offset %zu\n", rc, ctxp->pid, *display, *data_sz);
+      PDIP_DBG(ctxp, 3, "Read %d bytes from process %"PRIPID" in buffer %p at offset %"PRISIZE"\n", rc, ctxp->pid, *display, *data_sz);
       if (rc >= 0)
       {
         // If rc == 0 : No more data to read (i.e. An error occured while reading
@@ -387,13 +387,13 @@ do_it_again:
         // NUL terminate the string (data read until now)
         (*display)[*data_sz] = '\0';
 
-        PDIP_DBG(ctxp, 1, "Error '%m' (%d), data_sz=%zu\n", errno, *data_sz);
+        PDIP_DBG(ctxp, 1, "Error '%m' (%d), data_sz=%"PRISIZE"\n", errno, *data_sz);
 
         // errno is set
         rc = -1;
       }
     } // break;
-  } // End switch    
+  } // End switch
 
 end:
 
@@ -498,7 +498,7 @@ size_t  len;
   len = (p - ctxp->outstanding_data) + 1;
 
   // If at least one byte (not including terminating NUL) can be returned
-  PDIP_DBG(ctxp, 5, "len=%zu + 1\n", len - 1);
+  PDIP_DBG(ctxp, 5, "len=%"PRISIZE" + 1\n", len - 1);
 
   // If there are remaining data behind the last line
   if (p != pEnd)
@@ -559,7 +559,7 @@ static int pdip_append_to_outstanding(
 {
 int err_sav;
 
-  PDIP_DBG(ctxp, 5, "Appending %zu bytes to outstanding data (%p) at offset %zu\n", *data_sz, ctxp->outstanding_data, ctxp->outstanding_data_offset);
+  PDIP_DBG(ctxp, 5, "Appending %"PRISIZE" bytes to outstanding data (%p) at offset %"PRISIZE"\n", *data_sz, ctxp->outstanding_data, ctxp->outstanding_data_offset);
 
   if (!(*data_sz))
   {
@@ -568,15 +568,15 @@ int err_sav;
 
   // There is always a terminating NUL not counted by data_sz
   assert(*display_sz > *data_sz);
-  pdip_assert('\0' == (*display)[*data_sz], "*display_sz=%zu, *data_sz=%zu\n", *display_sz, *data_sz);
+  pdip_assert('\0' == (*display)[*data_sz], "*display_sz=%"PRISIZE", *data_sz=%"PRISIZE"\n", *display_sz, *data_sz);
 
-  //printf("outstanding_data_sz=%zu, outstanding_data_offset=%zu, *display_sz=%zu, *data_sz=%zu\n", ctxp->outstanding_data_sz, ctxp->outstanding_data_offset, *display_sz, *data_sz);
+  //printf("outstanding_data_sz=%"PRISIZE", outstanding_data_offset=%"PRISIZE", *display_sz=%"PRISIZE", *data_sz=%"PRISIZE"\n", ctxp->outstanding_data_sz, ctxp->outstanding_data_offset, *display_sz, *data_sz);
 
   // If there are already outstanding data
   if (ctxp->outstanding_data)
   {
     assert(ctxp->outstanding_data_sz > 0);
-    pdip_assert('\0' == ctxp->outstanding_data[ctxp->outstanding_data_offset], "outstanding_data_sz=%zu, outstanding_data_offset=%zu, *display_sz=%zu, *data_sz=%zu\n", ctxp->outstanding_data_sz, ctxp->outstanding_data_offset, *display_sz, *data_sz);
+    pdip_assert('\0' == ctxp->outstanding_data[ctxp->outstanding_data_offset], "outstanding_data_sz=%"PRISIZE", outstanding_data_offset=%"PRISIZE", *display_sz=%"PRISIZE", *data_sz=%"PRISIZE"\n", ctxp->outstanding_data_sz, ctxp->outstanding_data_offset, *display_sz, *data_sz);
     assert(ctxp->outstanding_data_offset <= ctxp->outstanding_data_sz);
 
     if (*data_sz > (ctxp->outstanding_data_sz - (ctxp->outstanding_data_offset + 1)))
@@ -587,7 +587,7 @@ int err_sav;
       {
         // Errno is set
         err_sav = errno;
-        PDIP_ERR(ctxp, "realloc(%zu): '%m' (%d)\n", ctxp->outstanding_data_sz + *data_sz, errno);
+        PDIP_ERR(ctxp, "realloc(%"PRISIZE"): '%m' (%d)\n", ctxp->outstanding_data_sz + *data_sz, errno);
         ctxp->outstanding_data_sz = 0;
         ctxp->outstanding_data_offset = 0;
         errno = err_sav;
@@ -595,7 +595,7 @@ int err_sav;
       }
 
       ctxp->outstanding_data_sz += *data_sz;
-    } // End if enough space 
+    } // End if enough space
 
     // Include terminating NUL in the copy
     memcpy(ctxp->outstanding_data + ctxp->outstanding_data_offset, *display, *data_sz + 1);
@@ -605,7 +605,7 @@ int err_sav;
   {
     assert(0 == ctxp->outstanding_data_sz);
     assert(0 == ctxp->outstanding_data_offset);
-    
+
     // Add terminating NUL
     ctxp->outstanding_data = *display;
     ctxp->outstanding_data_sz = *display_sz;
@@ -700,7 +700,7 @@ regmatch_t result;
 
       // Size of the remaining data
       l = ctxp->outstanding_data_offset - result.rm_eo;
-      pdip_assert(strlen(p) == l, "l=%zu, strlen(p)=%zu\n", l, strlen(p));
+      pdip_assert(strlen(p) == l, "l=%"PRISIZE", strlen(p)=%"PRISIZE"\n", l, strlen(p));
 
       // Reset the outstanding data space
       ctxp->outstanding_data_offset = 0;
@@ -742,7 +742,7 @@ regmatch_t result;
       // There is at least one slot for the terminating NUL in the outstanding space;
       (*display)[result.rm_eo] = '\0';
 
-      PDIP_DUMP(ctxp, 2, "Remaining outstanding data (%zu bytes):\n", ctxp->outstanding_data, ctxp->outstanding_data_offset, ctxp->outstanding_data_offset);
+      PDIP_DUMP(ctxp, 2, "Remaining outstanding data (%"PRISIZE" bytes):\n", ctxp->outstanding_data, ctxp->outstanding_data_offset, ctxp->outstanding_data_offset);
 
       return 0;
     }
@@ -848,7 +848,7 @@ int            err_sav = 0;
     // If outstanding data have been flushed ==> Return them to the user
     if (*data_sz)
     {
-      PDIP_DBG(ctxp, 4, "Returning %zu outstanding data bytes\n", *data_sz);
+      PDIP_DBG(ctxp, 4, "Returning %"PRISIZE" outstanding data bytes\n", *data_sz);
       rc = PDIP_RECV_DATA;
       goto end_no_regex;
     }
@@ -966,7 +966,7 @@ end_no_regex:
       goto end_regex;
     }
 
-    PDIP_DBG(ctxp, 5, "Number of sub expressions in regex (%s): %zu\n", regular_expr, regex.re_nsub);
+    PDIP_DBG(ctxp, 5, "Number of sub expressions in regex (%s): %"PRISIZE"\n", regular_expr, regex.re_nsub);
 
     // First of all, look for a match in the outstanding data if any
     rc = pdip_look_for_regex(ctxp, regular_expr, &regex, display, display_sz, data_sz);
@@ -1073,7 +1073,7 @@ read_again:
 	            }
                     else
 		    {
-                      PDIP_DBG(ctxp, 4, "Returning %zu outstanding data bytes\n", *data_sz);
+                      PDIP_DBG(ctxp, 4, "Returning %"PRISIZE" outstanding data bytes\n", *data_sz);
                       rc = PDIP_RECV_DATA;
 		    }
 	          }
@@ -1146,7 +1146,7 @@ read_again:
             goto end_regex;
           }
 
-          PDIP_DBG(ctxp, 8, "Realloced reception buffer %p with %zu bytes (data_sz=%zu)\n", *display, *display_sz, *data_sz);
+          PDIP_DBG(ctxp, 8, "Realloced reception buffer %p with %"PRISIZE" bytes (data_sz=%"PRISIZE")\n", *display, *display_sz, *data_sz);
         } // End if not enough space in the buffer
 
         // Blocking data reception (let one slot for terminating NUL)
@@ -1284,7 +1284,7 @@ int         state;
 
   // Mutual exclusion with the signal handler
   PDIP_MASK_SIG();
-  state = ctxp->state; 
+  state = ctxp->state;
   PDIP_UNMASK_SIG();
 
   if (PDIP_STATE_ALIVE != state)
@@ -1305,7 +1305,7 @@ int         state;
   }
   else if ((size_t)(rc + 1) > sizeof(str))
   {
-    PDIP_ERR(ctxp, "format '%s' is too long (rc=%d) for internal buffer (%zu bytes max)\n", format, rc, sizeof(str));
+    PDIP_ERR(ctxp, "format '%s' is too long (rc=%d) for internal buffer (%"PRISIZE" bytes max)\n", format, rc, sizeof(str));
     errno = ENOSPC;
     return -1;
   }
@@ -1727,7 +1727,7 @@ static int pdip_set_user_cfg(
     int err_sav;
 
       err_sav = errno;
-      PDIP_ERR(0, "malloc(%zu): '%m' (%d)\n", PDIP_NB_BYTES_FOR_CPU() * sizeof(unsigned char *), errno);
+      PDIP_ERR(0, "malloc(%"PRISIZE"): '%m' (%d)\n", PDIP_NB_BYTES_FOR_CPU() * sizeof(unsigned char *), errno);
       errno = err_sav;
       return -1;
     }
@@ -1742,7 +1742,7 @@ static int pdip_set_user_cfg(
   if (cfg->buf_resize_increment > 1)
   {
     ctxp->buf_resize_increment = cfg->buf_resize_increment;
-  }  
+  }
 
   return 0;
 } // pdip_set_user_cfg
@@ -1785,7 +1785,7 @@ unsigned int    saved_pdip_nb_cpu;
 
   // Mutual exclusion with the signal handler
   PDIP_MASK_SIG();
-  state = ctxp->state;  
+  state = ctxp->state;
   PDIP_UNMASK_SIG();
 
   // If a program is already under control
@@ -1983,7 +1983,7 @@ unsigned int    saved_pdip_nb_cpu;
 
       assert(fds > 2);
       pdip_assert(ctxp->pty_master > 2, "ctxp->pty_master=%d\n", ctxp->pty_master);
-      
+
       // Redirect input/outputs to the slave side of PTY
       close(0);
       close(1);
@@ -2019,7 +2019,7 @@ unsigned int    saved_pdip_nb_cpu;
       }
 
       // As the child is a session leader, set the controlling terminal to be the slave
-      // side of the PTY 
+      // side of the PTY
       rc = ioctl(fds, TIOCSCTTY, 1);
       if (rc < 0)
       {
@@ -2103,7 +2103,7 @@ unsigned int    saved_pdip_nb_cpu;
 
     default: // Father
     {
-      PDIP_DBG(ctxp, 1, "Forked process %d for program '%s'\n", ctxp->pid, av[0]);
+      PDIP_DBG(ctxp, 1, "Forked process %"PRIPID" for program '%s'\n", ctxp->pid, av[0]);
 
       // Close the slave side of the PTY
       close(fds);
@@ -2115,7 +2115,7 @@ unsigned int    saved_pdip_nb_cpu;
       PDIP_MASK_SIG();
       if (PDIP_STATE_INIT != ctxp->state)
       {
-        pdip_assert(PDIP_STATE_ZOMBIE == ctxp->state, "Unexpected state %d for process %d\n", ctxp->state, ctxp->pid);
+        pdip_assert(PDIP_STATE_ZOMBIE == ctxp->state, "Unexpected state %d for process %"PRIPID"\n", ctxp->state, ctxp->pid);
 
         // Let the field as it is. We return OK to the user.
       }
@@ -2243,13 +2243,13 @@ static void pdip_display_status(
 {
   if (WIFEXITED(ctxp->status))
   {
-    PDIP_DBG(ctxp, 3, "Process '%s' (%d) exited with status %d\n", ctxp->av[0], ctxp->pid, WEXITSTATUS(ctxp->status));
+    PDIP_DBG(ctxp, 3, "Process '%s' (%"PRIPID") exited with status %d\n", ctxp->av[0], ctxp->pid, WEXITSTATUS(ctxp->status));
     return;
   }
 
   if (WIFSIGNALED(ctxp->status))
   {
-    PDIP_DBG(ctxp, 3, "Process '%s' (%d) received signal %d\n", ctxp->av[0], ctxp->pid, WTERMSIG(ctxp->status));
+    PDIP_DBG(ctxp, 3, "Process '%s' (%"PRIPID") received signal %d\n", ctxp->av[0], ctxp->pid, WTERMSIG(ctxp->status));
     return;
   }
 } // pdip_display_status
@@ -2532,7 +2532,7 @@ pdip_ctx_t *ctxp;
   ctxp = (pdip_ctx_t *)malloc(sizeof(pdip_ctx_t));
   if (!ctxp)
   {
-    PDIP_ERR(0, "malloc(%zu): '%m' (%d)\n", sizeof(pdip_ctx_t), errno);
+    PDIP_ERR(0, "malloc(%"PRISIZE"): '%m' (%d)\n", sizeof(pdip_ctx_t), errno);
     return (pdip_t)0;
   }
 
@@ -2596,7 +2596,7 @@ int rc;
   PDIP_MASK_SIG();
   if (ctxp->pid > 0)
   {
-    PDIP_DBG(ctxp, 2, "Sending signal %d to '%s' (%d)\n", sig, ctxp->av[0], ctxp->pid);
+    PDIP_DBG(ctxp, 2, "Sending signal %d to '%s' (%"PRIPID")\n", sig, ctxp->av[0], ctxp->pid);
     rc = kill(ctxp->pid, sig);
   }
   else
@@ -2955,7 +2955,7 @@ int pdip_signal_handler(
       {
         if (info->si_pid == ctxp->pid)
 	{
-          PDIP_DBG(ctxp, 2, "Catched SIGCHLD from process '%s' (%d), state=%d\n", ctxp->av[0], ctxp->pid, ctxp->state);
+          PDIP_DBG(ctxp, 2, "Catched SIGCHLD from process '%s' (%"PRIPID"), state=%d\n", ctxp->av[0], ctxp->pid, ctxp->state);
           break;
 	}
 
@@ -2969,8 +2969,8 @@ int pdip_signal_handler(
         // consequently, the state may not be updated yet by the father
         if (PDIP_STATE_ALIVE != ctxp->state)
 	{
-          pdip_assert(PDIP_STATE_INIT == ctxp->state, "Unexpected state %d for process %d\n", ctxp->state, ctxp->pid);
-          PDIP_DBG(ctxp, 1, "Process %d died prematurely!\n", ctxp->pid);
+          pdip_assert(PDIP_STATE_INIT == ctxp->state, "Unexpected state %d for process %"PRIPID"\n", ctxp->state, ctxp->pid);
+          PDIP_DBG(ctxp, 1, "Process %"PRIPID" died prematurely!\n", ctxp->pid);
 	}
 
         ctxp->state = PDIP_STATE_ZOMBIE;
@@ -3017,7 +3017,7 @@ int rc;
 
   // A process linked with PDIP may call fork() at any time. Hence, a SIGCHLD
   // may occur at any time but it is not linked to any PDIP context as the
-  // child processes are not the results of calls to pdip_exec(). 
+  // child processes are not the results of calls to pdip_exec().
   if (PDIP_SIG_HANDLED != rc)
   {
     PDIP_DBG(0, 3, "Signal not handled: rc=%d, sig=%d\n", rc, sig);

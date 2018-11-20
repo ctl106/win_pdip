@@ -1,51 +1,54 @@
 pdip.c
 	// includes
-	#include <sys/wait.h>
-	#include <sys/select.h>
-	#include <regex.h>
-	#include <termios.h>
-	#include <sys/ioctl.h>
-	#include "config.h"
+	#include <sys/wait.h>	-	matched to corresponding data
+	#include <sys/select.h>	-	matched to corresponding data
+	#include <regex.h>		-	matched to corresponding data
+	#include <termios.h>	-		unused in pdip.c?
+	#include <sys/ioctl.h>	-		unused in pdip.c?
+[FIXED]	#include "config.h"	-	actually needed, but CMakeFiles.txt wasn't set up for out-of-source building
 	
 	// macros(?)
-	SIGTERM			-	708
-	SIGKILL			-	716
-	SIGTTOU			-	737
-	SIGTTIN			-	745
-	SIGCHILD		-	912, 1060
-	WHONOHANG		-	915
-	SIGALARM		-	1035
-	SA_NOCLDSTOP	-	1066
-	SA_RESTART		-	1066
-	SA_RESETHANDE	-	1066
+	SIGTERM			-	708			-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	SIGKILL			-	716			-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	SIGTTOU			-	737			-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	SIGTTIN			-	745			-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	SIGCHILD		-	912, 1060	-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	WHONOHANG		-	915			-	sys/wait.h
+	SIGALRM			-	1035		-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	SA_NOCLDSTOP	-	1066, 1137	-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	SA_RESTART		-	1066, 1136	-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	SA_RESETHAND	-	1066, 1137	-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	SIGBUS			-	1119		-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	SA_SIGINFO		-	1137		-	signal.h		(could be visible from sys/wait.h or sys/select.h
 	
 	// types
-	fd_set		-	820
-	sigset_t	-	1054
-	siginfo_t	-	1084
+	fd_set		-	820			-	sys/select.h	(implemented as struct?)
+	sigset_t	-	1054, 1116	-	sys/select.h	(or signal.h?)
+	siginfo_t	-	1084		-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	regex_t		-	1308, 1640	-	regex.h
 	
 	// structs
-	struct sigaction	-	1053
+	struct sigaction	-	1053, 1115	-	signal.h		(could be visible from sys/wait.h or sys/select.h
 	
 	// functions and function-like macros
-	kill()			-	708, 716
-	waitpid()		-	724
-	FD_ZERO()		-	826
-	FD_SET()		-	827
-	select()		-	832
-	FD_ISSET()		-	857
-	WIFEXITED()		-	930
-	WEXITSTATUS()	-	932
-	WIFSIGNALED()	-	936
-	WTERMSIG()		-	938
-	WCOREDUMP()		-	938
-	sigemptyset()	-	1059
-	sigaddset()		-	1060
-	sigaction()		-	1067
+	kill()			-	708, 716	-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	waitpid()		-	724			-	sys/wait.h
+	FD_ZERO()		-	826			-	sys/select.h
+	FD_SET()		-	827			-	sys/select.h
+	select()		-	832			-	sys/select.h
+	FD_ISSET()		-	857			-	sys/select.h
+	WIFEXITED()		-	930			-	sys/wait.h
+	WEXITSTATUS()	-	932			-	sys/wait.h
+	WIFSIGNALED()	-	936			-	sys/wait.h
+	WTERMSIG()		-	938			-	sys/wait.h
+	WCOREDUMP()		-	938			-	sys/wait.h (gnu specific? Idk...)
+	sigemptyset()	-	1059		-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	sigaddset()		-	1060		-	signal.h		(could be visible from sys/wait.h or sys/select.h
+	sigaction()		-	1067		-	signal.h		(could be visible from sys/wait.h or sys/select.h
 	
 	
 	// misc
-	%d for pid_t	-	917, 932, 938, 942, 965, 972, 984, 988, 1008
+[FIXED]	%d for pid_t	-	917, 932, 938, 942, 965, 972, 984, 988, 1008
 		As it happens there is no standard print specifier
 		Additionally, my types.h file has definitions of different sizes,
 		depending on what flags are set.
@@ -57,4 +60,9 @@ pdip.c
 		Given that this is a compiler-specific feature (that I'm suprised is
 		failing with my GCC, but maybe that's on MinGW, Idk), we should get rid
 		of this in favor of an explicit call.
+	
+	sizeof() evaluating to int *	-	1134
+		Need to double check where sizeof() is defined, if that's the issue...
+	
+	pdip_sig_exception undeclared(?)	-	1135
 	

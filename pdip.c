@@ -467,7 +467,7 @@ static void pdip_new_argv(char *str)
       pdip_argv = (char **)realloc(pdip_argv, ((size_t)pdip_argv_nb * sizeof(char *)));
       if (!pdip_argv)
       {
-        PDIP_ERR("Error %d at realloc(%"PRISIZE"u)\n", errno, (size_t)pdip_argv_nb * sizeof(char *));
+        PDIP_ERR("Error %d at realloc(%"PRISIZE")\n", errno, (size_t)pdip_argv_nb * sizeof(char *));
         exit(1);
       }
     }
@@ -482,7 +482,7 @@ static void pdip_new_argv(char *str)
     pdip_argv = (char **)malloc((size_t)pdip_argv_nb * sizeof(char *));
     if (!pdip_argv)
     {
-      PDIP_ERR("Error %d at malloc(%"PRISIZE"u)\n", errno, (size_t)pdip_argv_nb * sizeof(char *));
+      PDIP_ERR("Error %d at malloc(%"PRISIZE")\n", errno, (size_t)pdip_argv_nb * sizeof(char *));
       exit(1);
     }
     pdip_argv[0] = str;
@@ -793,7 +793,7 @@ int err_sav;
       }
 
       err_sav = errno;
-      //PDIP_ERR("Error '%s' (%d) on read(fd:%d, l:%"PRISIZE"u)\n", strerror(errno), errno, fd, l);
+      //PDIP_ERR("Error '%s' (%d) on read(fd:%d, l:%"PRISIZE")\n", strerror(errno), errno, fd, l);
       errno = err_sav;
       return -1;
     }
@@ -914,7 +914,7 @@ int   status;
   // Get the status of the child
   pid = waitpid(-1, &status, WNOHANG);
 
-  PDIP_DBG(6, "Received SIGCHLD signal from process %d\n", pid);
+  PDIP_DBG(6, "Received SIGCHLD signal from process %"PRIPID"\n", pid);
 
   // If error
   if (-1 == pid)
@@ -929,17 +929,17 @@ int   status;
   {
     if (WIFEXITED(status))
     {
-      PDIP_DBG(2, "Sub process with pid %d exited with code %d\n", pid, WEXITSTATUS(status));
+      PDIP_DBG(2, "Sub process with pid %"PRIPID" exited with code %d\n", pid, WEXITSTATUS(status));
     }
     else
     {
       if (WIFSIGNALED(status))
       {
-        PDIP_DBG(1, "Sub process with pid %d finished with signal %d%s\n", pid, WTERMSIG(status), (WCOREDUMP(status) ? " (core dumped)" : ""));
+        PDIP_DBG(1, "Sub process with pid %"PRIPID" finished with signal %d%s\n", pid, WTERMSIG(status), (WCOREDUMP(status) ? " (core dumped)" : ""));
       }
       else
       {
-        PDIP_DBG(1, "Sub process with pid %d finished in error\n", pid);
+        PDIP_DBG(1, "Sub process with pid %"PRIPID" finished in error\n", pid);
       }
     }
 
@@ -962,14 +962,14 @@ int   status;
         pdip_exit_prog = WEXITSTATUS(status);
 
         // Debug message if normal exit or debug activated
-        PDIP_DBG(1, "Sub process with pid %d exited with code %d\n", pid, pdip_exit_prog);
+        PDIP_DBG(1, "Sub process with pid %"PRIPID" exited with code %d\n", pid, pdip_exit_prog);
 
         // If error and debug not activated, force an error message
         if (pdip_exit_prog != 0)
 	{
           if (0 == pdip_debug)
 	  {
-            PDIP_DBG(0, "Sub process with pid %d exited with code %d\n", pid, pdip_exit_prog);
+            PDIP_DBG(0, "Sub process with pid %"PRIPID" exited with code %d\n", pid, pdip_exit_prog);
 	  }
 
           // If error, dump the outstanding data in case error messages from
@@ -981,11 +981,11 @@ int   status;
       {
         if (WIFSIGNALED(status))
 	{
-          PDIP_ERR("Sub process with pid %d finished with signal %d%s\n", pid, WTERMSIG(status), (WCOREDUMP(status) ? " (core dumped)" : ""));
+          PDIP_ERR("Sub process with pid %"PRIPID" finished with signal %d%s\n", pid, WTERMSIG(status), (WCOREDUMP(status) ? " (core dumped)" : ""));
 	}
         else
 	{
-          PDIP_ERR("Sub process with pid %d finished in error\n", pid);
+          PDIP_ERR("Sub process with pid %"PRIPID" finished in error\n", pid);
 	}
 
         // Default error exit code
@@ -1005,7 +1005,7 @@ int   status;
   {
     // We failed inside the fork() ==> See comment above pdip_chld_failed_on_exec
     // definition
-    PDIP_DBG(1, "Child %d finished in error\n", pid);
+    PDIP_DBG(1, "Child %"PRIPID" finished in error\n", pid);
     pdip_chld_failed_on_exec = 1;
 
     // Default error exit code
@@ -1342,7 +1342,7 @@ int             eol_fnd;
     line_skip = (char *)realloc(line_skip, line_sz);
     if (!line_skip)
     {
-      PDIP_ERR("Memory allocation error (%"PRISIZE"u bytes)\n", line_sz);
+      PDIP_ERR("Memory allocation error (%"PRISIZE" bytes)\n", line_sz);
       return -1;
     }
   } // End if working buffer to short
@@ -1692,7 +1692,7 @@ int   rc;
     return;
   }
 
-  PDIP_DBG(3, "Number of sub expressions in regex (%s): %"PRISIZE"u\n", pattern, regex->re_nsub);
+  PDIP_DBG(3, "Number of sub expressions in regex (%s): %"PRISIZE"\n", pattern, regex->re_nsub);
 
   return;
 } // pdip_compile_regex
@@ -2430,7 +2430,7 @@ int             err_sav;
 		    }
                     else
 		    {
-                      PDIP_ERR("Line %u: malloc(%"PRISIZE"u) failed with error %d ('%s')\n"
+                      PDIP_ERR("Line %u: malloc(%"PRISIZE") failed with error %d ('%s')\n"
                                , lineno, (size_t)(pdip_argc * sizeof(char *)), errno, strerror(errno));
 		    }
 		  }
@@ -2449,7 +2449,7 @@ int             err_sav;
 		    }
                     else
 		    {
-                      PDIP_ERR("Line %u: malloc(%"PRISIZE"u) failed with error %d ('%s')\n"
+                      PDIP_ERR("Line %u: malloc(%"PRISIZE") failed with error %d ('%s')\n"
                                , lineno, (size_t)(pdip_argc * sizeof(char *)), errno, strerror(errno));
 		    }
 		  } // End if synchronous

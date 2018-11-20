@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 2.6)
 
 PROJECT(pdip C)
 
+if(WIN32)
+  SET(POSIX_ROOT "C:/Program\ Files/Git")
+else()
+  SET(POSIX_ROOT "")
+endif()
+
 INCLUDE (FindGZIP.cmake)
 
 INCLUDE(version.cmake)

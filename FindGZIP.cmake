@@ -6,9 +6,9 @@
 
 FIND_PROGRAM(GZIP_TOOL
   NAMES gzip
-  PATHS /bin
-        /usr/bin
-        /usr/local/bin
+  PATHS ${POSIX_ROOT}/bin
+        ${POSIX_ROOT}/usr/bin
+        ${POSIX_ROOT}/usr/local/bin
 )
 
 
